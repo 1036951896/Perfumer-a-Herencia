@@ -1,0 +1,77 @@
+/* Fuentes personalizadas deshabilitadas temporalmente
+@font-face {
+  font-family: 'Magnetik';
+  src: url('/fonts/Magnetik-Light.woff2') format('woff2'),
+       url('/fonts/Magnetik-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Magnetik';
+  src: url('/fonts/Magnetik-Bold.woff2') format('woff2'),
+       url('/fonts/Magnetik-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*  Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-dark antialiased;
+  font-family: var(--font-sans);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+}
+
+h1 {
+  @apply text-4xl md:text-6xl font-light;
+}
+
+h2 {
+  @apply text-2xl md:text-3xl font-light;
+}
+
+h3 {
+  @apply text-xl md:text-2xl font-light;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-in-out;
+}

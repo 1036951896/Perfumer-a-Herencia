@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Marca {
+  id          String   @id @default(uuid())
+  nombre      String   @unique
+  descripcion String?
+  paisOrigen  String?
+  activo      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  productos Producto[]
+
+  @@map("marcas")
+}
+
+model Categoria {
+  id          String         @id @default(uuid())
+  nombre      String         @unique
+  descripcion String?
+  activa      Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  productos Producto[]
+
+  @@map("categorias")
+}
+
+model Producto {
+  id            String        @id @default(uuid())
+  nombre        String
+  descripcion   String?
+  segmento      Segmento      // ORIGINAL o REPLICA
+  genero        Genero
+  concentracion Concentracion
+  volumen       String        // "100ml", "50ml", etc.
+  marcaId       String
+  marca         Marca         @relation(fields: [marcaId], references: [id], onDelete: Cascade)
+  categoriaId   String
+  categoria     Categoria     @relation(fields: [categoriaId], references: [id])
+  precio        Float
+  stock         Int           @default(0)
+  imagenUrl     String
+  destacado     Boolean       @default(false)
+  activo        Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  pedidoItems PedidoItem[]
+
+  @@index([marcaId])
+  @@index([categoriaId])
+  @@index([segmento])
+  @@index([genero])
+  @@map("productos")
+}
+
+model Pedido {
+  id             String        @id @default(uuid())
+  referencia     String        @unique
+  nombreCliente  String
+  emailCliente   String
+  telefonoCliente String?
+  direccion      String?
+  total          Float
+  estado         EstadoPedido  @default(PENDIENTE)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  items PedidoItem[]
+
+  @@map("pedidos")
+}
+
+model PedidoItem {
+  id        String   @id @default(uuid())
+  pedidoId  String
+  pedido    Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  productoId String
+  producto  Producto @relation(fields: [productoId], references: [id])
+  cantidad  Int
+  precio    Float
+
+  @@index([pedidoId])
+  @@index([productoId])
+  @@map("pedido_items")
+}
+
+model AdminUser {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // bcrypt hashed
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin_users")
+}
+
+enum Segmento {
+  ORIGINAL
+  REPLICA
+}
+
+enum Genero {
+  MASCULINO
+  FEMENINO
+  UNISEX
+}
+
+enum Concentracion {
+  EAU_DE_PARFUM
+  EAU_DE_TOILETTE
+  EXTRAIT
+  EAU_DE_COLOGNE
+}
+
+enum EstadoPedido {
+  PENDIENTE
+  EN_PROCESO
+  ENVIADO
+  ENTREGADO
+  CANCELADO
+}

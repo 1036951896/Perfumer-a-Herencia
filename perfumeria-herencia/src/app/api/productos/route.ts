@@ -6,18 +6,20 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
 
-    const tipo = searchParams.get('tipo') as TipoProducto | null
+    const segmento = searchParams.get('segmento') as TipoProducto | null
     const genero = searchParams.get('genero') as Genero | null
     const marcaId = searchParams.get('marcaId') as string | null
     const busqueda = searchParams.get('busqueda') as string | null
+    const coleccionSlug = searchParams.get('coleccionSlug') as string | null
     const pagina = parseInt(searchParams.get('pagina') || '1')
     const limite = parseInt(searchParams.get('limite') || '12')
 
     const resultado = await ProductoService.obtenerConFiltros({
-      tipo: tipo || undefined,
+      segmento: segmento || undefined,
       genero: genero || undefined,
       marcaId: marcaId || undefined,
       busqueda: busqueda || undefined,
+      coleccionSlug: coleccionSlug || undefined,
       pagina,
       limite,
     })

@@ -55,6 +55,7 @@ export function Navbar() {
               width={80}
               height={80}
               className="object-contain opacity-90"
+              priority
             />
           </Link>
 

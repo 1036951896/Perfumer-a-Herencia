@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "prisma db seed"
+    "prisma:seed": "prisma db seed",
+    "import:treinta": "ts-node --compiler-options {\"module\":\"commonjs\"} scripts/importar-catalogo-treinta.ts",
+    "import:treinta:full": "ts-node --compiler-options {\"module\":\"commonjs\"} scripts/importar-catalogo-completo.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",

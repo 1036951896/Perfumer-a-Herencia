@@ -19,7 +19,7 @@ export const CrearProductoSchema = z.object({
     .string()
     .max(1000, 'La descripción no puede exceder 1000 caracteres')
     .optional(),
-  tipo: z.enum(['ORIGINAL', 'REPLICA'] as const),
+  segmento: z.enum(['ORIGINAL', 'REPLICA'] as const),
   genero: z.enum(['MASCULINO', 'FEMENINO', 'UNISEX'] as const),
   marcaId: z.string().uuid('ID de marca inválido'),
   precio: z

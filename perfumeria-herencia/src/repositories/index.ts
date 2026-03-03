@@ -1,4 +1,4 @@
-import { PrismaClient, TipoProducto, Genero } from '@prisma/client'
+import { PrismaClient, Segmento, Genero } from '@prisma/client'
 import { FiltroProductos, RespuestaPaginada, Producto } from '@/types'
 
 const prisma = new PrismaClient()
@@ -11,11 +11,12 @@ export class ProductoRepository {
     filtros: FiltroProductos
   ): Promise<RespuestaPaginada<Producto>> {
     const {
-      tipo,
+      segmento,
       genero,
       marcaId,
       busqueda,
       destacado,
+      coleccionSlug,
       pagina = 1,
       limite = 12,
     } = filtros
@@ -26,10 +27,13 @@ export class ProductoRepository {
       activo: true,
     }
 
-    if (tipo) where.tipo = tipo
+    if (segmento) where.segmento = segmento
     if (genero) where.genero = genero
     if (marcaId) where.marcaId = marcaId
     if (destacado !== undefined) where.destacado = destacado
+    if (coleccionSlug) {
+      where.colecciones = { some: { slug: coleccionSlug, activo: true } }
+    }
     if (busqueda) {
       where.OR = [
         { nombre: { contains: busqueda, mode: 'insensitive' } },
@@ -370,5 +374,82 @@ export class AdminUserRepository {
       where: { id },
       data: { activo: false },
     })
+  }
+}
+
+export class ColeccionRepository {
+  static readonly include = {
+    _count: { select: { productos: true } },
+  } as const
+
+  /** Todas las colecciones activas de un segmento, ordenadas */
+  static async obtenerActivas(segmento: string) {
+    return prisma.coleccion.findMany({
+      where: { activo: true, segmento: segmento as any },
+      include: this.include,
+      orderBy: { orden: 'asc' },
+    })
+  }
+
+  /** Todas (admin) */
+  static async obtenerTodas(segmento?: string) {
+    return prisma.coleccion.findMany({
+      where: segmento ? { segmento: segmento as any } : undefined,
+      include: this.include,
+      orderBy: { orden: 'asc' },
+    })
+  }
+
+  /** Por slug (con productos básicos) */
+  static async obtenerPorSlug(slug: string) {
+    return prisma.coleccion.findUnique({
+      where: { slug },
+      include: {
+        ...this.include,
+        productos: {
+          where: { activo: true },
+          select: { id: true, nombre: true, imagenUrl: true },
+          take: 6,
+        },
+      },
+    })
+  }
+
+  /** Por ID (admin) */
+  static async obtenerPorId(id: string) {
+    return prisma.coleccion.findUnique({
+      where: { id },
+      include: {
+        _count: { select: { productos: true } },
+        productos: {
+          select: { id: true, nombre: true, imagenUrl: true, segmento: true },
+        },
+      },
+    })
+  }
+
+  static async crear(datos: any) {
+    return prisma.coleccion.create({
+      data: datos,
+      include: this.include,
+    })
+  }
+
+  static async actualizar(id: string, datos: any) {
+    const { productoIds, ...rest } = datos
+    return prisma.coleccion.update({
+      where: { id },
+      data: {
+        ...rest,
+        ...(productoIds !== undefined && {
+          productos: { set: productoIds.map((pid: string) => ({ id: pid })) },
+        }),
+      },
+      include: this.include,
+    })
+  }
+
+  static async eliminar(id: string) {
+    return prisma.coleccion.delete({ where: { id } })
   }
 }

@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
 import { Producto } from '@/types'
 import { formatarPrecio } from '@/lib/utils'
 
@@ -10,18 +11,24 @@ export interface ProductCardProps {
   segment: 'original' | 'replicas'
 }
 
+const FALLBACK_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='600' height='600' fill='%23f5f5f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='serif' font-size='24' fill='%23999'%3EPerfume%3C/text%3E%3C/svg%3E"
+
 export function ProductCard({ producto, segment }: ProductCardProps) {
+  const [imgSrc, setImgSrc] = useState(producto.imagenUrl)
+
   return (
     <Link href={`/${segment}/producto/${producto.id}`} className="group block">
       <div className="cursor-pointer">
         {/* Imagen */}
         <div className="relative w-full aspect-square overflow-hidden mb-6">
           <Image
-            src={producto.imagenUrl}
+            src={imgSrc}
             alt={producto.nombre}
             fill
+            unoptimized
             className="object-cover transition-opacity duration-500 group-hover:opacity-80"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={() => setImgSrc(FALLBACK_IMG)}
           />
         </div>
 

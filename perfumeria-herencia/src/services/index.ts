@@ -3,6 +3,7 @@ import {
   MarcaRepository,
   PedidoRepository,
   CategoriaRepository,
+  ColeccionRepository,
 } from '@/repositories'
 import {
   FiltroProductos,
@@ -10,6 +11,8 @@ import {
   ActualizarProductoDTO,
   CrearPedidoDTO,
   RespuestaAPI,
+  CrearColeccionDTO,
+  ActualizarColeccionDTO,
 } from '@/types'
 import { generarReferenciaPedido } from '@/lib/utils'
 
@@ -281,5 +284,63 @@ export class CategoriaService {
       }
       throw new Error('Error al crear categoría')
     }
+  }
+}
+
+export class ColeccionService {
+  /** Slug automático desde nombre */
+  static generarSlug(nombre: string): string {
+    return nombre
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+  }
+
+  static async obtenerActivas(segmento: string) {
+    return ColeccionRepository.obtenerActivas(segmento.toUpperCase())
+  }
+
+  static async obtenerTodas(segmento?: string) {
+    return ColeccionRepository.obtenerTodas(segmento?.toUpperCase())
+  }
+
+  static async obtenerPorSlug(slug: string) {
+    const col = await ColeccionRepository.obtenerPorSlug(slug)
+    if (!col) throw new Error('Colección no encontrada')
+    return col
+  }
+
+  static async obtenerPorId(id: string) {
+    const col = await ColeccionRepository.obtenerPorId(id)
+    if (!col) throw new Error('Colección no encontrada')
+    return col
+  }
+
+  static async crear(datos: CrearColeccionDTO) {
+    const slug = datos.slug || this.generarSlug(datos.nombre)
+    try {
+      return await ColeccionRepository.crear({ ...datos, slug })
+    } catch (error: any) {
+      if (error.code === 'P2002') throw new Error('Ya existe una colección con ese slug')
+      throw new Error('Error al crear colección')
+    }
+  }
+
+  static async actualizar(id: string, datos: ActualizarColeccionDTO) {
+    await this.obtenerPorId(id)
+    try {
+      return await ColeccionRepository.actualizar(id, datos)
+    } catch (error: any) {
+      if (error.code === 'P2002') throw new Error('Ya existe una colección con ese slug')
+      throw error
+    }
+  }
+
+  static async eliminar(id: string) {
+    await this.obtenerPorId(id)
+    return ColeccionRepository.eliminar(id)
   }
 }

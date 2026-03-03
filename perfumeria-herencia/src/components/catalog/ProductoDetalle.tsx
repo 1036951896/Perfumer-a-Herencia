@@ -122,12 +122,12 @@ export function ProductoDetalle({
             <div className="flex gap-2 flex-wrap">
               <span
                 className={`inline-block px-3 py-1 rounded text-white text-sm font-bold ${
-                  producto.tipo === 'ORIGINAL'
+                  producto.segmento === 'ORIGINAL'
                     ? 'bg-primary'
                     : 'bg-dark'
                 }`}
               >
-                {producto.tipo === 'ORIGINAL'
+                {producto.segmento === 'ORIGINAL'
                   ? '100% Original'
                   : 'Réplica'}
               </span>

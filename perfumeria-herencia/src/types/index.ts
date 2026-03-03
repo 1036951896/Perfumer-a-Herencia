@@ -1,8 +1,54 @@
 // Types para el modelo de base de datos
 export type TipoProducto = 'ORIGINAL' | 'REPLICA'
+export type Segmento = TipoProducto
 export type Genero = 'MASCULINO' | 'FEMENINO' | 'UNISEX'
 export type TipoCategoria = 'TENDENCIA' | 'COLECCION'
 export type EstadoPedido = 'PENDIENTE' | 'CONFIRMADO' | 'ENTREGADO'
+
+export interface Coleccion {
+  id: string
+  nombre: string
+  slug: string
+  descripcion?: string
+  seoTitle?: string
+  seoDescription?: string
+  imagenUrl?: string
+  bannerUrl?: string
+  orden: number
+  activo: boolean
+  destacado: boolean
+  segmento: TipoProducto
+  createdAt: Date
+  updatedAt: Date
+  _count?: { productos: number }
+}
+
+export interface CrearColeccionDTO {
+  nombre: string
+  slug: string
+  descripcion?: string
+  seoTitle?: string
+  seoDescription?: string
+  imagenUrl?: string
+  bannerUrl?: string
+  orden?: number
+  destacado?: boolean
+  segmento: TipoProducto
+}
+
+export interface ActualizarColeccionDTO {
+  nombre?: string
+  slug?: string
+  descripcion?: string
+  seoTitle?: string
+  seoDescription?: string
+  imagenUrl?: string
+  bannerUrl?: string
+  orden?: number
+  activo?: boolean
+  destacado?: boolean
+  productoIds?: string[]
+}
 
 export interface Marca {
   id: string
@@ -14,7 +60,6 @@ export interface Marca {
 export interface Categoria {
   id: string
   nombre: string
-  tipo: TipoCategoria
   activa: boolean
   createdAt: Date
 }
@@ -23,7 +68,7 @@ export interface Producto {
   id: string
   nombre: string
   descripcion?: string
-  tipo: TipoProducto
+  segmento: TipoProducto
   genero: Genero
   marcaId: string
   marca?: Marca
@@ -59,11 +104,12 @@ export interface AdminUser {
 
 // Types para filtros
 export interface FiltroProductos {
-  tipo?: TipoProducto
+  segmento?: TipoProducto
   genero?: Genero
   marcaId?: string
   busqueda?: string
   destacado?: boolean
+  coleccionSlug?: string
   pagina?: number
   limite?: number
 }
@@ -72,7 +118,7 @@ export interface FiltroProductos {
 export interface CrearProductoDTO {
   nombre: string
   descripcion?: string
-  tipo: TipoProducto
+  segmento: TipoProducto
   genero: Genero
   marcaId: string
   precio?: number
@@ -83,7 +129,7 @@ export interface CrearProductoDTO {
 export interface ActualizarProductoDTO {
   nombre?: string
   descripcion?: string
-  tipo?: TipoProducto
+  segmento?: TipoProducto
   genero?: Genero
   marcaId?: string
   precio?: number

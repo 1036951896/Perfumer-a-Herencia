@@ -1,0 +1,35 @@
+import type { Metadata } from 'next'
+import { CatalogoPorSegmento } from '@/components/catalog/CatalogoPorSegmento'
+
+interface Props {
+  params: { segment: string; slug: string }
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/api/colecciones?segmento=${params.segment.toUpperCase()}`,
+      { next: { revalidate: 60 } }
+    )
+    const data = await res.json()
+    const col = (data.datos || []).find((c: any) => c.slug === params.slug)
+
+    return {
+      title: col?.seoTitle ?? col?.nombre ?? 'Colección — HERENCIA',
+      description: col?.seoDescription ?? col?.descripcion ?? undefined,
+      openGraph: col?.bannerUrl ? { images: [col.bannerUrl] } : undefined,
+    }
+  } catch {
+    return { title: 'Colección — HERENCIA' }
+  }
+}
+
+export default function ColeccionPage({ params }: Props) {
+  const segment = params.segment === 'original' ? 'original' : 'replicas'
+  return (
+    <CatalogoPorSegmento
+      segment={segment as 'original' | 'replicas'}
+      coleccionSlug={params.slug}
+    />
+  )
+}

@@ -37,6 +37,29 @@ model Categoria {
   @@map("categorias")
 }
 
+model Coleccion {
+  id             String     @id @default(uuid())
+  nombre         String
+  slug           String     @unique
+  descripcion    String?
+  seoTitle       String?
+  seoDescription String?
+  imagenUrl      String?    // imagen card carrusel
+  bannerUrl      String?    // hero de página colección
+  orden          Int        @default(0)
+  activo         Boolean    @default(true)
+  destacado      Boolean    @default(false)
+  segmento       Segmento
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  productos Producto[]
+
+  @@index([segmento])
+  @@index([activo])
+  @@map("colecciones")
+}
+
 model Producto {
   id            String        @id @default(uuid())
   nombre        String
@@ -58,6 +81,7 @@ model Producto {
   updatedAt     DateTime      @updatedAt
 
   pedidoItems PedidoItem[]
+  colecciones Coleccion[]
 
   @@index([marcaId])
   @@index([categoriaId])

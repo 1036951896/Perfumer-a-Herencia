@@ -59,6 +59,14 @@ export default function AdminLayout({
                 Marcas
               </Link>
             </li>
+            <li>
+              <Link 
+                href="/admin/colecciones" 
+                className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors"
+              >
+                Colecciones
+              </Link>
+            </li>
           </ul>
         </nav>
 

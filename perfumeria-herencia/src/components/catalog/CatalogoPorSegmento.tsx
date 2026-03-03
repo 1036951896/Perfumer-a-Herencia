@@ -1,52 +1,63 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Producto, FiltroProductos, TipoProducto, Marca } from '@/types'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Producto, FiltroProductos, TipoProducto, Marca, Coleccion } from '@/types'
 import { ProductCard } from '@/components/catalog/ProductCard'
 import { FiltroBuscador } from '@/components/catalog/FiltroBuscador'
 import { Paginacion } from '@/components/catalog/Paginacion'
+import { CarruselColecciones } from '@/components/catalog/CarruselColecciones'
 
 interface CatalogoPorSegmentoProps {
   segment: 'original' | 'replicas'
+  /** Si viene definido, filtra por colección y muestra su hero */
+  coleccionSlug?: string
 }
 
-export function CatalogoPorSegmento({ segment }: CatalogoPorSegmentoProps) {
+export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegmentoProps) {
   const [productos, setProductos] = useState<Producto[]>([])
   const [marcas, setMarcas] = useState<Marca[]>([])
   const [generos, setGeneros] = useState<string[]>([])
+  const [coleccion, setColeccion] = useState<Coleccion | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [pagina, setPagina] = useState(1)
   const [totalPaginas, setTotalPaginas] = useState(1)
   const [filtros, setFiltros] = useState<FiltroProductos>({
-    tipo: segment === 'original' ? 'ORIGINAL' : 'REPLICA',
+    segmento: segment === 'original' ? 'ORIGINAL' : 'REPLICA',
+    coleccionSlug: coleccionSlug,
   })
 
-  // Cargar marcas y géneros al montar
+  // Cargar marcas, géneros y datos de colección al montar
   useEffect(() => {
     const cargarDatosIniciales = async () => {
       try {
-        const [marcasRes, generosRes] = await Promise.all([
-          fetch('/api/marcas'),
-          fetch('/api/generos'),
-        ])
+        const promises: Promise<any>[] = [
+          fetch('/api/marcas').then((r) => r.json()),
+          fetch('/api/generos').then((r) => r.json()),
+        ]
 
-        if (marcasRes.ok) {
-          const data = await marcasRes.json()
-          setMarcas(data.datos || [])
+        if (coleccionSlug) {
+          const segType = segment === 'original' ? 'ORIGINAL' : 'REPLICA'
+          promises.push(
+            fetch(`/api/colecciones?segmento=${segType}`)
+              .then((r) => r.json())
+              .then((d) => (d.datos || []).find((c: Coleccion) => c.slug === coleccionSlug) || null)
+          )
         }
 
-        if (generosRes.ok) {
-          const data = await generosRes.json()
-          setGeneros(data.datos || [])
-        }
+        const [marcasData, generosData, colData] = await Promise.all(promises)
+        setMarcas(marcasData.datos || [])
+        setGeneros(generosData.datos || [])
+        if (colData !== undefined) setColeccion(colData)
       } catch (error) {
         console.error('Error al cargar datos iniciales:', error)
       }
     }
 
     cargarDatosIniciales()
-  }, [])
+  }, [segment, coleccionSlug])
 
   // Cargar productos cuando cambian los filtros
   useEffect(() => {
@@ -56,30 +67,23 @@ export function CatalogoPorSegmento({ segment }: CatalogoPorSegmentoProps) {
 
       try {
         const queryParams = new URLSearchParams()
-        if (filtros.tipo) queryParams.append('tipo', filtros.tipo)
+        if (filtros.segmento) queryParams.append('segmento', filtros.segmento)
         if (filtros.genero) queryParams.append('genero', filtros.genero)
-        if (filtros.marcaId)
-          queryParams.append('marcaId', filtros.marcaId)
-        if (filtros.busqueda)
-          queryParams.append('busqueda', filtros.busqueda)
+        if (filtros.marcaId) queryParams.append('marcaId', filtros.marcaId)
+        if (filtros.busqueda) queryParams.append('busqueda', filtros.busqueda)
+        if (filtros.coleccionSlug) queryParams.append('coleccionSlug', filtros.coleccionSlug)
         queryParams.append('pagina', (pagina || 1).toString())
         queryParams.append('limite', '12')
 
-        const response = await fetch(
-          `/api/productos?${queryParams.toString()}`
-        )
+        const response = await fetch(`/api/productos?${queryParams.toString()}`)
 
-        if (!response.ok) {
-          throw new Error('Error al cargar productos')
-        }
+        if (!response.ok) throw new Error('Error al cargar productos')
 
         const data = await response.json()
         setProductos(data.datos || [])
         setTotalPaginas(data.totalPaginas || 1)
       } catch (error) {
-        setError(
-          error instanceof Error ? error.message : 'Error desconocido'
-        )
+        setError(error instanceof Error ? error.message : 'Error desconocido')
         setProductos([])
       } finally {
         setLoading(false)
@@ -93,29 +97,94 @@ export function CatalogoPorSegmento({ segment }: CatalogoPorSegmentoProps) {
     setFiltros({
       ...filtros,
       ...nuevosFiltros,
-      tipo:
-        segment === 'original'
-          ? ('ORIGINAL' as TipoProducto)
-          : ('REPLICA' as TipoProducto),
+      segmento: segment === 'original' ? ('ORIGINAL' as TipoProducto) : ('REPLICA' as TipoProducto),
+      coleccionSlug: coleccionSlug,
     })
     setPagina(nuevosFiltros.pagina || 1)
   }
 
+  /* ── Hero de colección ───────────────────────────────── */
+  const ColeccionHero = () => {
+    if (!coleccion) return null
+    const bg = coleccion.bannerUrl || coleccion.imagenUrl
+
+    return (
+      <div className="relative w-full mb-16" style={{ height: 'clamp(220px, 40vh, 480px)' }}>
+        {bg ? (
+          <Image
+            src={bg}
+            alt={coleccion.nombre}
+            fill
+            priority
+            unoptimized
+            className="object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-dark/8" />
+        )}
+        {/* Overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(160deg,rgba(17,17,17,.38) 0%,rgba(17,17,17,.62) 55%,rgba(17,17,17,.78) 100%)',
+          }}
+        />
+        {/* Texto */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8 z-10">
+          {coleccion.destacado && (
+            <span
+              className="inline-block mb-4 text-[.58rem] tracking-[.32em] uppercase border px-3 py-1"
+              style={{ borderColor: '#C2A27A', color: '#C2A27A' }}
+            >
+              Trending
+            </span>
+          )}
+          <p className="text-[.6rem] tracking-[.38em] uppercase mb-3" style={{ color: '#C2A27A' }}>
+            {segment === 'original' ? 'Colección Signature' : 'Colección Inspired'}
+          </p>
+          <h1 className="font-serif text-white font-light leading-tight mb-3"
+              style={{ fontSize: 'clamp(1.8rem,4.5vw,3.2rem)' }}>
+            {coleccion.nombre}
+          </h1>
+          {coleccion.descripcion && (
+            <p className="max-w-lg text-sm font-light leading-relaxed" style={{ color: 'rgba(255,255,255,.55)' }}>
+              {coleccion.descripcion}
+            </p>
+          )}
+        </div>
+        {/* Volver */}
+        <Link
+          href={`/${segment}`}
+          className="absolute top-5 left-5 text-[.62rem] tracking-widest uppercase z-10"
+          style={{ color: 'rgba(255,255,255,.6)', borderBottom: '1px solid rgba(255,255,255,.3)' }}
+        >
+          ← Catálogo
+        </Link>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-6 py-24">
-        {/* Header Editorial */}
-        <div className="mb-20 animate-fade-in">
-          <p className="text-xs tracking-widest uppercase text-dark/40 mb-6">
-            Colección Permanente
-          </p>
+      <div className="max-w-6xl mx-auto px-6 py-16">
 
-          <h1 className="font-serif text-5xl font-light leading-tight max-w-2xl text-dark">
-            {segment === 'original'
-              ? 'Fragancias que definen carácter y presencia.'
-              : 'Interpretaciones inspiradas en la elegancia clásica.'}
-          </h1>
-        </div>
+        {/* Hero de colección o carrusel */}
+        {coleccionSlug ? <ColeccionHero /> : <CarruselColecciones segment={segment} />}
+
+        {/* Header editorial (solo sin colección) */}
+        {!coleccionSlug && (
+          <div className="mb-20 animate-fade-in">
+            <p className="text-xs tracking-widest uppercase text-dark/40 mb-6">
+              Colección Permanente
+            </p>
+            <h1 className="font-serif text-5xl font-light leading-tight max-w-2xl text-dark">
+              {segment === 'original'
+                ? 'Fragancias que definen carácter y presencia.'
+                : 'Interpretaciones inspiradas en la elegancia clásica.'}
+            </h1>
+          </div>
+        )}
 
         {/* Filtros */}
         <div className="border-t border-dark/10 py-6 mb-16">
@@ -129,7 +198,9 @@ export function CatalogoPorSegmento({ segment }: CatalogoPorSegmentoProps) {
 
         {/* Texto curado */}
         <p className="text-center text-xs tracking-widest uppercase text-dark/30 mb-16">
-          Selección curada · Edición permanente
+          {coleccion
+            ? `${coleccion.nombre} · ${coleccion._count?.productos ?? ''} fragancias`
+            : 'Selección curada · Edición permanente'}
         </p>
 
         {/* Error */}
@@ -154,15 +225,9 @@ export function CatalogoPorSegmento({ segment }: CatalogoPorSegmentoProps) {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 mb-16">
               {productos.map((producto) => (
-                <ProductCard
-                  key={producto.id}
-                  producto={producto}
-                  segment={segment}
-                />
+                <ProductCard key={producto.id} producto={producto} segment={segment} />
               ))}
             </div>
-
-            {/* Paginación */}
             <Paginacion
               pagina={pagina}
               totalPaginas={totalPaginas}
@@ -175,3 +240,4 @@ export function CatalogoPorSegmento({ segment }: CatalogoPorSegmentoProps) {
     </div>
   )
 }
+

@@ -115,7 +115,7 @@ export default async function ProductosAdmin() {
           <li>• Las imágenes deben ser de alta calidad (mínimo 800x800px)</li>
           <li>• Las descripciones deben educar sobre las notas olfativas, no solo vender</li>
           <li>• El tono debe ser aspiracional pero honesto, nunca promocional</li>
-          <li>• Segmento "Signature" son fragancias originales de casa, "Inspired" son interpretaciones</li>
+          <li>• Segmento &quot;Signature&quot; son fragancias originales de casa, &quot;Inspired&quot; son interpretaciones</li>
         </ul>
       </div>
     </div>

@@ -63,7 +63,7 @@ export function Navbar() {
   }, [segment])
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-dark/10">
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-dark/8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
@@ -96,20 +96,20 @@ export function Navbar() {
               <div className="flex items-center gap-2 border-l border-dark/10 pl-6">
                 <button
                   onClick={() => handleChangeSegment('original')}
-                  className={`px-4 py-2 text-sm tracking-wider transition-all duration-300 ${
+                  className={`px-4 py-2 text-xs tracking-[0.2em] uppercase transition-all duration-300 relative ${
                     isOriginal
-                      ? 'text-dark border-b-2 border-accent'
-                      : 'text-dark/50 hover:text-dark'
+                      ? 'text-dark after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-accent'
+                      : 'text-dark/40 hover:text-dark'
                   }`}
                 >
                   Signature
                 </button>
                 <button
                   onClick={() => handleChangeSegment('replicas')}
-                  className={`px-4 py-2 text-sm tracking-wider transition-all duration-300 ${
+                  className={`px-4 py-2 text-xs tracking-[0.2em] uppercase transition-all duration-300 relative ${
                     isReplicas
-                      ? 'text-dark border-b-2 border-accent'
-                      : 'text-dark/50 hover:text-dark'
+                      ? 'text-dark after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-full after:bg-accent'
+                      : 'text-dark/40 hover:text-dark'
                   }`}
                 >
                   Inspired

@@ -9,11 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#C2A27A',    // Champagne suave
+        primary: '#C2A27A',    // Champagne
         dark: '#111111',       // Negro elegante
-        background: '#F4F2EE', // Marfil
-        accent: '#8C6A43',     // Oro envejecido
-        deep: '#382d2c',       // Mantener para compatibilidad
+        background: '#F4F2EE', // Marfil cálido
+        accent: '#8C6A43',     // Oro envejecido (separadores, activos)
+        deep: '#1e293b',       // Azul profundo (botones principales)
+        muted: '#737373',      // Texto secundario
       },
       fontFamily: {
         serif: ['Playfair Display', 'serif'],

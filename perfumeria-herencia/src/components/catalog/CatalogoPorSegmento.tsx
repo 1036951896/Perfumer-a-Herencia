@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { Producto, FiltroProductos, TipoProducto, Marca, Coleccion } from '@/types'
 import { ProductCard } from '@/components/catalog/ProductCard'
 import { FiltroBuscador } from '@/components/catalog/FiltroBuscador'
@@ -172,22 +173,34 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
         {/* Hero de colección o carrusel */}
         {coleccionSlug ? <ColeccionHero /> : <CarruselColecciones segment={segment} />}
 
-        {/* Header editorial (solo sin colección) */}
+        {/* Hero editorial (solo sin colección) */}
         {!coleccionSlug && (
-          <div className="mb-20 animate-fade-in">
-            <p className="text-xs tracking-widest uppercase text-dark/40 mb-6">
-              Colección Permanente
+          <motion.section
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.2 }}
+            className="text-center py-24"
+          >
+            <p className="text-[10px] tracking-[0.35em] uppercase text-dark/35 mb-6">
+              {segment === 'original' ? 'Colección Signature' : 'Colección Inspired'}
             </p>
-            <h1 className="font-serif text-5xl font-light leading-tight max-w-2xl text-dark">
+            <h2 className="font-serif text-4xl md:text-5xl font-light leading-tight text-dark">
               {segment === 'original'
-                ? 'Fragancias que definen carácter y presencia.'
-                : 'Interpretaciones inspiradas en la elegancia clásica.'}
-            </h1>
-          </div>
+                ? 'Fragancias que definen carácter.'
+                : 'Elegancia inspirada en lo eterno.'}
+            </h2>
+            {/* Separador dorado árabe */}
+            <div className="w-16 h-[1px] bg-accent mx-auto mt-8 mb-6" />
+            <p className="max-w-xl mx-auto text-dark/50 text-sm leading-relaxed">
+              {segment === 'original'
+                ? 'Una selección curada que fusiona elegancia contemporánea con la profundidad del lujo árabe.'
+                : 'Interpretaciones precisas de las grandes casas perfumeras, al alcance de quien aprecia lo bello.'}
+            </p>
+          </motion.section>
         )}
 
         {/* Filtros */}
-        <div className="border-t border-dark/10 py-6 mb-16">
+        <div className="border-t border-dark/8 py-6 mb-16">
           <FiltroBuscador
             onFiltrosChange={handleFiltrosChange}
             marcas={marcas}
@@ -197,7 +210,7 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
         </div>
 
         {/* Texto curado */}
-        <p className="text-center text-xs tracking-widest uppercase text-dark/30 mb-16">
+        <p className="text-center text-[10px] tracking-[0.3em] uppercase text-dark/25 mb-16">
           {coleccion
             ? `${coleccion.nombre} · ${coleccion._count?.productos ?? ''} fragancias`
             : 'Selección curada · Edición permanente'}
@@ -213,17 +226,17 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
         {/* Productos */}
         {loading && productos.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-dark/40 text-sm tracking-wider">Cargando colección...</p>
+            <p className="text-dark/30 text-xs tracking-[0.3em] uppercase">Cargando colección...</p>
           </div>
         ) : productos.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-dark/50 text-base font-light">
+            <p className="text-dark/40 text-base font-light">
               No encontramos fragancias con esos criterios.
             </p>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 mb-16">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-y-20 gap-x-10 mb-24">
               {productos.map((producto) => (
                 <ProductCard key={producto.id} producto={producto} segment={segment} />
               ))}

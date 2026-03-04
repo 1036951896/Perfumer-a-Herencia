@@ -21,29 +21,39 @@ export default function Gateway() {
       <div className="max-w-3xl text-center">
 
         {/* Logo */}
-        <div className="mb-8 animate-fade-in">
+        <div className="mb-16 animate-fade-in">
           <Image 
             src="/logo_minimalista.png"
             alt="Herencia Perfumería"
-            width={200}
-            height={200}
-            className="mx-auto opacity-90"
+            width={180}
+            height={180}
+            className="mx-auto opacity-95 logo-soft-shadow"
             priority
           />
+          <div className="w-12 h-[1px] bg-accent mx-auto mt-10 opacity-50"></div>
         </div>
 
-        <p className="text-sm uppercase tracking-widest-2xl opacity-40 mb-16 animate-fade-in">
+        <p
+          className="text-sm uppercase tracking-widest-2xl text-dark/50 mb-16 animate-fade-in"
+          style={{ animationDelay: '0.2s', animationFillMode: 'backwards' }}
+        >
           Perfumería de Autor
         </p>
 
         {/* Statement */}
-        <p className="text-lg leading-relaxed opacity-70 mb-20 max-w-xl mx-auto animate-fade-in">
+        <p
+          className="text-lg leading-relaxed text-dark/60 mb-20 max-w-xl mx-auto animate-fade-in"
+          style={{ animationDelay: '0.35s', animationFillMode: 'backwards' }}
+        >
           Cada fragancia es una declaración silenciosa.<br />
           Descubre la colección que conecta contigo.
         </p>
 
         {/* Collections */}
-        <div className="grid md:grid-cols-2 gap-16 animate-slide-up">
+        <div
+          className="grid md:grid-cols-2 gap-16 animate-slide-up"
+          style={{ animationDelay: '0.5s', animationFillMode: 'backwards' }}
+        >
 
           <div 
             onClick={() => handleSelect('original')}

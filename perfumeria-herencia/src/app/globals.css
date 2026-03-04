@@ -28,6 +28,7 @@ html {
 body {
   @apply bg-background text-dark antialiased;
   font-family: var(--font-sans);
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 /* Typography */

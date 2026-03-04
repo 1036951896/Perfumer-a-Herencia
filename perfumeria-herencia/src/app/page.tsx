@@ -18,19 +18,18 @@ export default function Gateway() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6">
-      <div className="max-w-3xl text-center">
+      <div className="max-w-2xl text-center">
 
-        {/* Logo */}
+        {/* Logo — punto más fuerte, sin dilución */}
         <div className="mb-16 animate-fade-in">
           <Image 
             src="/logo_minimalista.png"
             alt="Herencia Perfumería"
             width={180}
             height={180}
-            className="mx-auto opacity-95 logo-soft-shadow"
+            className="mx-auto logo-soft-shadow"
             priority
           />
-          <div className="w-12 h-[1px] bg-accent mx-auto mt-10 opacity-50"></div>
         </div>
 
         <p
@@ -42,7 +41,7 @@ export default function Gateway() {
 
         {/* Statement */}
         <p
-          className="text-lg leading-relaxed text-dark/60 mb-20 max-w-xl mx-auto animate-fade-in"
+          className="text-lg leading-relaxed text-dark/[0.65] mb-32 max-w-xl mx-auto animate-fade-in"
           style={{ animationDelay: '0.35s', animationFillMode: 'backwards' }}
         >
           Cada fragancia es una declaración silenciosa.<br />
@@ -58,27 +57,29 @@ export default function Gateway() {
           <div 
             onClick={() => handleSelect('original')}
             className="group cursor-pointer border-t border-dark/20 pt-8 
-                       transition-all duration-500 hover:opacity-60"
+                       transition-all duration-500 hover:border-accent"
           >
-            <h2 className="text-3xl font-serif font-light mb-4 group-hover:tracking-wider transition-all duration-500">
+            <h2 className="text-3xl font-serif font-light mb-4 text-dark/90 group-hover:tracking-wider group-hover:text-dark transition-all duration-500">
               Colección Signature
             </h2>
-            <p className="opacity-60 text-sm leading-relaxed">
+            <p className="text-dark/50 text-sm leading-relaxed mb-4">
               Fragancias originales certificadas.
             </p>
+            <div className="h-[1px] bg-accent w-0 group-hover:w-12 transition-all duration-500 ease-out"></div>
           </div>
 
           <div 
             onClick={() => handleSelect('replicas')}
             className="group cursor-pointer border-t border-dark/20 pt-8 
-                       transition-all duration-500 hover:opacity-60"
+                       transition-all duration-500 hover:border-accent"
           >
-            <h2 className="text-3xl font-serif font-light mb-4 group-hover:tracking-wider transition-all duration-500">
+            <h2 className="text-3xl font-serif font-light mb-4 text-dark/90 group-hover:tracking-wider group-hover:text-dark transition-all duration-500">
               Colección Inspired
             </h2>
-            <p className="opacity-60 text-sm leading-relaxed">
+            <p className="text-dark/50 text-sm leading-relaxed mb-4">
               Interpretaciones de alta calidad.
             </p>
+            <div className="h-[1px] bg-accent w-0 group-hover:w-12 transition-all duration-500 ease-out"></div>
           </div>
 
         </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -14,6 +14,16 @@ interface ProductoDetalleProps {
 
 const FALLBACK_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='600' height='600' fill='%23f5f5f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='serif' font-size='24' fill='%23999'%3EPerfume%3C/text%3E%3C/svg%3E"
 
+/** Deriva la URL de la imagen 2 a partir de la imagen 1 */
+function getImg2(img1: string): string | null {
+  if (!img1 || img1.startsWith('data:')) return null
+  // Formato: "nombre.1.avif" → "nombre.2.avif"
+  if (img1.includes('.1.avif')) return img1.replace('.1.avif', '.2.avif')
+  // Formato: "nombre1.avif" → "nombre2.avif"
+  if (img1.match(/1\.avif$/)) return img1.replace(/1\.avif$/, '2.avif')
+  return null
+}
+
 export function ProductoDetalle({
   productoId,
   segment,
@@ -25,6 +35,9 @@ export function ProductoDetalle({
   const [error, setError] = useState<string | null>(null)
   const [agregado, setAgregado] = useState(false)
   const [imgSrc, setImgSrc] = useState<string>(FALLBACK_IMG)
+  const [imagenes, setImagenes] = useState<string[]>([FALLBACK_IMG])
+  const [imgActiva, setImgActiva] = useState(0)
+  const touchStartX = useRef<number | null>(null)
 
   useEffect(() => {
     const cargarProducto = async () => {
@@ -33,24 +46,23 @@ export function ProductoDetalle({
         if (!response.ok) throw new Error('Producto no encontrado')
         const data = await response.json()
         setProducto(data.datos)
-        setImgSrc(data.datos?.imagenUrl || FALLBACK_IMG)
+        const img1 = data.datos?.imagenUrl || FALLBACK_IMG
+        const img2 = getImg2(img1)
+        setImagenes(img2 ? [img1, img2] : [img1])
+        setImgSrc(img1)
       } catch (error) {
         setError('Error al cargar el producto')
       } finally {
         setLoading(false)
       }
     }
-
     cargarProducto()
   }, [productoId])
 
   const handleAgregarCarrito = () => {
     if (!producto) return
-
-    // Limpiar claves viejas y leer carrito con protección
     localStorage.removeItem('carrito-original')
     localStorage.removeItem('carrito-replicas')
-
     let carrito: any[] = []
     try {
       const raw = localStorage.getItem('carrito')
@@ -58,46 +70,36 @@ export function ProductoDetalle({
       carrito = Array.isArray(parsed)
         ? parsed.filter((i: any) => i && i.producto && i.producto.id)
         : []
-    } catch {
-      carrito = []
-    }
-
-    const existente = carrito.find(
-      (i: any) => i.producto.id === producto.id
-    )
-
-    if (existente) {
-      existente.cantidad += cantidad
-    } else {
-      carrito.push({ producto, cantidad })
-    }
-
+    } catch { carrito = [] }
+    const existente = carrito.find((i: any) => i.producto.id === producto.id)
+    if (existente) { existente.cantidad += cantidad } else { carrito.push({ producto, cantidad }) }
     localStorage.setItem('carrito', JSON.stringify(carrito))
     setAgregado(true)
     setTimeout(() => setAgregado(false), 2000)
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-dark/50">Cargando producto...</p>
-      </div>
-    )
+  const irA = (idx: number) => setImgActiva(Math.max(0, Math.min(imagenes.length - 1, idx)))
+
+  const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX }
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return
+    const diff = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 50) irA(imgActiva + (diff > 0 ? 1 : -1))
+    touchStartX.current = null
   }
 
-  if (error || !producto) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-        <p className="text-dark/75 mb-4">{error || 'Producto no encontrado'}</p>
-        <Link
-          href={`/${segment}`}
-          className="text-primary hover:text-dark transition-colors"
-        >
-          ← Volver al catálogo
-        </Link>
-      </div>
-    )
-  }
+  if (loading) return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <p className="text-dark/50">Cargando producto...</p>
+    </div>
+  )
+
+  if (error || !producto) return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+      <p className="text-dark/75 mb-4">{error || 'Producto no encontrado'}</p>
+      <Link href={`/${segment}`} className="text-primary hover:text-dark transition-colors">← Volver al catálogo</Link>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-background py-12">
@@ -111,19 +113,74 @@ export function ProductoDetalle({
         </Link>
 
         <div className="grid md:grid-cols-2 gap-12">
-          {/* Imagen */}
+          {/* Carrusel de imágenes */}
           <div className="bg-white rounded-lg overflow-hidden shadow-sm">
-            <div className="relative w-full aspect-square">
-              <Image
-                src={imgSrc}
-                alt={producto.nombre}
-                fill
-                unoptimized
-                className="object-cover"
-                priority
-                onError={() => setImgSrc(FALLBACK_IMG)}
-              />
+            {/* Contenedor deslizable */}
+            <div
+              className="relative w-full aspect-square select-none"
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+            >
+              {imagenes.map((img, idx) => (
+                <div
+                  key={idx}
+                  className={`absolute inset-0 transition-opacity duration-500 ${
+                    idx === imgActiva ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                  }`}
+                >
+                  <Image
+                    src={img}
+                    alt={`${producto.nombre} - imagen ${idx + 1}`}
+                    fill
+                    unoptimized
+                    className="object-cover"
+                    priority={idx === 0}
+                    onError={() => {
+                      const copia = [...imagenes]
+                      copia[idx] = FALLBACK_IMG
+                      setImagenes(copia)
+                    }}
+                  />
+                </div>
+              ))}
+
+              {/* Flechas — solo si hay 2 imágenes */}
+              {imagenes.length > 1 && (
+                <>
+                  <button
+                    onClick={() => irA(imgActiva - 1)}
+                    disabled={imgActiva === 0}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow transition-all disabled:opacity-30"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    onClick={() => irA(imgActiva + 1)}
+                    disabled={imgActiva === imagenes.length - 1}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow transition-all disabled:opacity-30"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
             </div>
+
+            {/* Bolitas indicadoras */}
+            {imagenes.length > 1 && (
+              <div className="flex justify-center gap-2 py-3">
+                {imagenes.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => irA(idx)}
+                    className={`rounded-full transition-all duration-300 ${
+                      idx === imgActiva
+                        ? 'w-4 h-2 bg-dark'
+                        : 'w-2 h-2 bg-dark/25 hover:bg-dark/50'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Información */}

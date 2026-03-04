@@ -25,11 +25,12 @@ export default function Gateway() {
           <Image 
             src="/logo_minimalista.png"
             alt="Herencia Perfumería"
-            width={180}
-            height={180}
+            width={200}
+            height={200}
             className="mx-auto logo-soft-shadow"
             priority
           />
+          <div className="w-12 h-[1px] bg-accent mx-auto mt-10 opacity-60"></div>
         </div>
 
         <p

@@ -46,10 +46,17 @@ export function ProductoDetalle({
         if (!response.ok) throw new Error('Producto no encontrado')
         const data = await response.json()
         setProducto(data.datos)
-        const img1 = data.datos?.imagenUrl || FALLBACK_IMG
-        const img2 = getImg2(img1)
-        setImagenes(img2 ? [img1, img2] : [img1])
-        setImgSrc(img1)
+        const imgRaw: string = data.datos?.imagenUrl || FALLBACK_IMG
+        // Soporte pipe-separated: "url1|url2"
+        if (imgRaw.includes('|')) {
+          const imgs = imgRaw.split('|').map((u: string) => u.trim()).filter(Boolean)
+          setImagenes(imgs)
+          setImgSrc(imgs[0])
+        } else {
+          const img2 = getImg2(imgRaw)
+          setImagenes(img2 ? [imgRaw, img2] : [imgRaw])
+          setImgSrc(imgRaw)
+        }
       } catch (error) {
         setError('Error al cargar el producto')
       } finally {
@@ -133,7 +140,7 @@ export function ProductoDetalle({
                     alt={`${producto.nombre} - imagen ${idx + 1}`}
                     fill
                     unoptimized
-                    className="object-cover"
+                    className="object-contain"
                     priority={idx === 0}
                     onError={() => {
                       const copia = [...imagenes]

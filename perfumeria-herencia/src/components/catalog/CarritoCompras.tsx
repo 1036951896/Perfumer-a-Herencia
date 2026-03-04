@@ -19,33 +19,46 @@ export function CarritoCompras({ segment }: { segment: 'original' | 'replicas' }
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    // Cargar carrito desde localStorage
-    const carritoGuardado = localStorage.getItem(`carrito-${segment}`)
-    if (carritoGuardado) {
-      setItems(JSON.parse(carritoGuardado))
+    // Limpiar claves viejas del localStorage
+    localStorage.removeItem('carrito-original')
+    localStorage.removeItem('carrito-replicas')
+
+    // Cargar carrito desde localStorage y filtrar items corruptos
+    try {
+      const carritoGuardado = localStorage.getItem('carrito')
+      if (carritoGuardado) {
+        const parsed = JSON.parse(carritoGuardado)
+        const validos = Array.isArray(parsed)
+          ? parsed.filter((i: any) => i && i.producto && i.producto.id && typeof i.cantidad === 'number')
+          : []
+        setItems(validos)
+      }
+    } catch {
+      localStorage.removeItem('carrito')
     }
     setReferencia(generarReferenciaPedido())
   }, [segment])
 
-  // Guardar carrito en localStorage cuando cambia
-  useEffect(() => {
-    localStorage.setItem(`carrito-${segment}`, JSON.stringify(items))
-  }, [items, segment])
+  const total = calcularTotal(items.filter(i => i?.producto).map(i => ({ cantidad: i.cantidad, precio: i.producto.precio || 0 })))
 
-  const total = calcularTotal(items.map(i => ({ cantidad: i.cantidad, precio: i.producto.precio || 0 })))
+  // Guarda los items en localStorage y actualiza el estado
+  const actualizarCarrito = (nuevosItems: ItemCarrito[]) => {
+    setItems(nuevosItems)
+    localStorage.setItem('carrito', JSON.stringify(nuevosItems))
+  }
 
   const handleCantidadChange = (id: string, nuevaCantidad: number) => {
     if (nuevaCantidad <= 0) {
-      setItems(items.filter(i => i.producto.id !== id))
+      actualizarCarrito(items.filter(i => i.producto.id !== id))
     } else {
-      setItems(items.map(i => 
+      actualizarCarrito(items.map(i =>
         i.producto.id === id ? { ...i, cantidad: nuevaCantidad } : i
       ))
     }
   }
 
   const handleRemover = (id: string) => {
-    setItems(items.filter(i => i.producto.id !== id))
+    actualizarCarrito(items.filter(i => i.producto.id !== id))
   }
 
   const handleComprar = async () => {
@@ -87,10 +100,10 @@ export function CarritoCompras({ segment }: { segment: 'original' | 'replicas' }
       )
 
       // Redirigir a WhatsApp
-      window.location.href = `https://wa.me/573001234567?text=${mensaje}`
+      window.location.href = `https://wa.me/573117997246?text=${mensaje}`
 
       // Limpiar carrito
-      setItems([])
+      actualizarCarrito([])
     } catch (error) {
       alert('Error al procesar el pedido. Intenta de nuevo.')
     } finally {
@@ -99,17 +112,17 @@ export function CarritoCompras({ segment }: { segment: 'original' | 'replicas' }
   }
 
   return (
-    <div className="min-h-screen bg-background py-12">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background py-6 sm:py-12">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <Link
             href={`/${segment}`}
-            className="text-primary hover:text-dark transition-colors mb-4 inline-block"
+            className="text-primary hover:text-dark transition-colors mb-3 inline-block text-sm"
           >
             ← Volver al catálogo
           </Link>
-          <h1 className="text-4xl font-bold text-deep">Mi Carrito</h1>
+          <h1 className="text-2xl sm:text-4xl font-bold text-deep">Mi Carrito</h1>
         </div>
 
         {items.length === 0 ? (
@@ -130,77 +143,67 @@ export function CarritoCompras({ segment }: { segment: 'original' | 'replicas' }
                 {items.map(item => (
                   <div
                     key={item.producto.id}
-                    className="flex gap-4 border-b border-gray-200 pb-6 last:border-b-0"
+                    className="flex gap-3 border-b border-gray-200 pb-6 last:border-b-0"
                   >
+                    {/* Imagen */}
                     <img
-                      src={item.producto.imagenUrl}
+                      src={item.producto.imagenUrl || ''}
                       alt={item.producto.nombre}
-                      className="w-24 h-24 object-cover rounded"
+                      className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded flex-shrink-0"
                     />
 
-                    <div className="flex-1">
-                      <h3 className="font-bold text-dark mb-1">
-                        {item.producto.nombre}
-                      </h3>
-                      <p className="text-sm text-dark/60 mb-2">
-                        {item.producto.marca?.nombre}
-                      </p>
-                      <p className="text-lg font-bold text-primary mb-4">
+                    {/* Contenido */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-dark text-sm sm:text-base leading-tight truncate">
+                            {item.producto.nombre}
+                          </h3>
+                          <p className="text-xs text-dark/60 mt-0.5">
+                            {item.producto.marca?.nombre}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleRemover(item.producto.id)}
+                          className="text-red-400 hover:text-red-600 text-lg leading-none flex-shrink-0"
+                          aria-label="Remover"
+                        >
+                          ×
+                        </button>
+                      </div>
+
+                      {/* Precio unitario */}
+                      <p className="text-sm font-semibold text-primary mt-1">
                         {formatarPrecio(item.producto.precio)}
                       </p>
 
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() =>
-                            handleCantidadChange(
-                              item.producto.id,
-                              item.cantidad - 1
-                            )
-                          }
-                          className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50"
-                        >
-                          −
-                        </button>
-                        <input
-                          type="number"
-                          value={item.cantidad}
-                          onChange={(e) =>
-                            handleCantidadChange(
-                              item.producto.id,
-                              parseInt(e.target.value) || 1
-                            )
-                          }
-                          className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
-                          min="1"
-                        />
-                        <button
-                          onClick={() =>
-                            handleCantidadChange(
-                              item.producto.id,
-                              item.cantidad + 1
-                            )
-                          }
-                          className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50"
-                        >
-                          +
-                        </button>
-
-                        <button
-                          onClick={() => handleRemover(item.producto.id)}
-                          className="ml-auto text-red-600 hover:text-red-700 text-sm font-medium"
-                        >
-                          Remover
-                        </button>
+                      {/* Cantidad + Subtotal en la misma fila */}
+                      <div className="flex items-center justify-between mt-3 gap-2 flex-wrap">
+                        <div className="flex items-center border border-gray-300 rounded">
+                          <button
+                            onClick={() => handleCantidadChange(item.producto.id, item.cantidad - 1)}
+                            className="px-2 py-1 text-sm hover:bg-gray-100"
+                          >
+                            −
+                          </button>
+                          <input
+                            type="number"
+                            value={item.cantidad}
+                            onChange={(e) => handleCantidadChange(item.producto.id, parseInt(e.target.value) || 1)}
+                            className="w-10 text-center text-sm py-1 border-x border-gray-300 outline-none"
+                            min="1"
+                          />
+                          <button
+                            onClick={() => handleCantidadChange(item.producto.id, item.cantidad + 1)}
+                            className="px-2 py-1 text-sm hover:bg-gray-100"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <p className="text-sm font-bold text-deep">
+                          {formatarPrecio((item.producto.precio || 0) * item.cantidad)}
+                        </p>
                       </div>
-                    </div>
-
-                    <div className="text-right">
-                      <p className="text-sm text-dark/60 mb-2">Subtotal</p>
-                      <p className="text-xl font-bold text-deep">
-                        {formatarPrecio(
-                          (item.producto.precio || 0) * item.cantidad
-                        )}
-                      </p>
                     </div>
                   </div>
                 ))}
@@ -209,7 +212,7 @@ export function CarritoCompras({ segment }: { segment: 'original' | 'replicas' }
 
             {/* Resumen */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-sm p-6 sticky top-20 space-y-6">
+              <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 lg:sticky lg:top-20 space-y-4 sm:space-y-6">
                 <div>
                   <p className="text-sm text-dark/60 mb-1">Referencia de pedido</p>
                   <p className="font-mono text-sm font-bold text-deep">
@@ -230,9 +233,9 @@ export function CarritoCompras({ segment }: { segment: 'original' | 'replicas' }
                     <p className="font-medium text-dark">Coordinar</p>
                   </div>
 
-                  <div className="border-t border-gray-200 pt-4 flex justify-between">
+                  <div className="border-t border-gray-200 pt-4 flex justify-between items-center">
                     <p className="font-bold text-deep">Total</p>
-                    <p className="text-2xl font-bold text-primary">
+                    <p className="text-xl sm:text-2xl font-bold text-primary">
                       {formatarPrecio(total)}
                     </p>
                   </div>

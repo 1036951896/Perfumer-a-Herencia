@@ -43,6 +43,25 @@ export function Navbar() {
   const isOriginal = segment === 'original'
   const isReplicas = segment === 'replicas'
 
+  const [cantidadCarrito, setCantidadCarrito] = useState(0)
+
+  useEffect(() => {
+    if (!segment) return
+    const actualizarContador = () => {
+      const carrito = JSON.parse(localStorage.getItem('carrito') || '[]')
+      const total = carrito.reduce((acc: number, i: any) => acc + (i.cantidad || 1), 0)
+      setCantidadCarrito(total)
+    }
+    actualizarContador()
+    window.addEventListener('storage', actualizarContador)
+    // Polling cada segundo para detectar cambios del mismo tab
+    const interval = setInterval(actualizarContador, 1000)
+    return () => {
+      window.removeEventListener('storage', actualizarContador)
+      clearInterval(interval)
+    }
+  }, [segment])
+
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-dark/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -102,20 +121,44 @@ export function Navbar() {
             {segment && (
               <Link
                 href={`/${segment}/carrito`}
-                className="text-dark hover:text-primary transition-colors"
+                className="relative text-dark hover:text-primary transition-colors"
               >
-                🛒
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                </svg>
+                {cantidadCarrito > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                    {cantidadCarrito > 99 ? '99+' : cantidadCarrito}
+                  </span>
+                )}
               </Link>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-dark hover:text-primary"
-          >
-            ☰
-          </button>
+          {/* Mobile: carrito + hamburguesa */}
+          <div className="flex items-center gap-4 md:hidden">
+            {segment && (
+              <Link
+                href={`/${segment}/carrito`}
+                className="relative text-dark hover:text-primary transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                </svg>
+                {cantidadCarrito > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                    {cantidadCarrito > 99 ? '99+' : cantidadCarrito}
+                  </span>
+                )}
+              </Link>
+            )}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-dark hover:text-primary"
+            >
+              ☰
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -162,10 +205,18 @@ export function Navbar() {
             {segment && (
               <Link
                 href={`/${segment}/carrito`}
-                className="block text-dark hover:text-primary border-t border-gray-200 pt-4"
+                className="flex items-center gap-2 text-dark hover:text-primary border-t border-gray-200 pt-4"
                 onClick={() => setIsMenuOpen(false)}
               >
-                🛒 Carrito
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                </svg>
+                Carrito
+                {cantidadCarrito > 0 && (
+                  <span className="bg-primary text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {cantidadCarrito}
+                  </span>
+                )}
               </Link>
             )}
           </div>

@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { WhatsAppFlotante } from '@/components/layout/WhatsAppFlotante'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -16,6 +17,7 @@ export default function CatalogLayout({
       <Navbar />
       {children}
       <Footer />
+      <WhatsAppFlotante />
     </>
   )
 }

@@ -8,10 +8,7 @@ export default function Gateway() {
   const router = useRouter()
 
   useEffect(() => {
-    const savedSegment = localStorage.getItem('segment')
-    if (savedSegment) {
-      router.push(`/${savedSegment}`)
-    }
+    // No auto-redirigir: siempre mostrar el gateway para que el usuario elija
   }, [router])
 
   const handleSelect = (segment: 'original' | 'replicas') => {

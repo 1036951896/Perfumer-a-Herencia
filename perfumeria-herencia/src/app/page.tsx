@@ -21,20 +21,20 @@ export default function Gateway() {
       <div className="max-w-2xl text-center">
 
         {/* Logo — punto más fuerte, sin dilución */}
-        <div className="mb-16 animate-fade-in">
+        <div className="mb-8 animate-fade-in">
           <Image 
             src="/logo_minimalista.png"
             alt="Herencia Perfumería"
-            width={260}
-            height={260}
+            width={340}
+            height={340}
             className="mx-auto logo-soft-shadow"
             priority
           />
-          <div className="w-12 h-[1px] bg-accent mx-auto mt-10 opacity-60"></div>
+          <div className="w-12 h-[1px] bg-accent mx-auto mt-6 opacity-60"></div>
         </div>
 
         <p
-          className="text-sm uppercase tracking-widest-2xl text-dark/50 mb-16 animate-fade-in"
+          className="text-sm uppercase tracking-widest-2xl text-dark/50 mb-8 animate-fade-in"
           style={{ animationDelay: '0.2s', animationFillMode: 'backwards' }}
         >
           Perfumería de Autor
@@ -42,7 +42,7 @@ export default function Gateway() {
 
         {/* Statement */}
         <p
-          className="text-lg leading-relaxed text-dark/[0.65] mb-32 max-w-xl mx-auto animate-fade-in"
+          className="text-lg leading-relaxed text-dark/[0.65] mb-14 max-w-xl mx-auto animate-fade-in"
           style={{ animationDelay: '0.35s', animationFillMode: 'backwards' }}
         >
           Cada fragancia es una declaración silenciosa.<br />
@@ -51,7 +51,7 @@ export default function Gateway() {
 
         {/* Collections */}
         <div
-          className="grid md:grid-cols-2 gap-16 animate-slide-up"
+          className="grid md:grid-cols-2 gap-8 animate-slide-up"
           style={{ animationDelay: '0.5s', animationFillMode: 'backwards' }}
         >
 

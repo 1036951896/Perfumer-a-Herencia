@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Producto, FiltroProductos, TipoProducto, Marca, Coleccion } from '@/types'
 import { ProductCard } from '@/components/catalog/ProductCard'
 import { FiltroBuscador } from '@/components/catalog/FiltroBuscador'
 import { Paginacion } from '@/components/catalog/Paginacion'
 import { CarruselColecciones } from '@/components/catalog/CarruselColecciones'
+import { CarruselSeleccionCurada } from '@/components/catalog/CarruselSeleccionCurada'
 
 interface CatalogoPorSegmentoProps {
   segment: 'original' | 'replicas'
@@ -17,18 +19,31 @@ interface CatalogoPorSegmentoProps {
 }
 
 export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegmentoProps) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
   const [productos, setProductos] = useState<Producto[]>([])
   const [marcas, setMarcas] = useState<Marca[]>([])
   const [generos, setGeneros] = useState<string[]>([])
   const [coleccion, setColeccion] = useState<Coleccion | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [pagina, setPagina] = useState(1)
+  const [pagina, setPaginaState] = useState(() => {
+    const p = parseInt(searchParams.get('pagina') || '1', 10)
+    return isNaN(p) || p < 1 ? 1 : p
+  })
   const [totalPaginas, setTotalPaginas] = useState(1)
   const [filtros, setFiltros] = useState<FiltroProductos>({
     segmento: segment === 'original' ? 'ORIGINAL' : 'REPLICA',
     coleccionSlug: coleccionSlug,
   })
+
+  const setPagina = (nuevaPagina: number) => {
+    setPaginaState(nuevaPagina)
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('pagina', nuevaPagina.toString())
+    router.replace(`?${params.toString()}`, { scroll: false })
+  }
 
   // Cargar marcas, géneros y datos de colección al montar
   useEffect(() => {
@@ -83,6 +98,9 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
         const data = await response.json()
         setProductos(data.datos || [])
         setTotalPaginas(data.totalPaginas || 1)
+        // Guardar lista de IDs para navegación prev/next en detalle
+        const ids = (data.datos || []).map((p: Producto) => p.id)
+        if (ids.length > 0) sessionStorage.setItem('herencia_lista_ids', JSON.stringify(ids))
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Error desconocido')
         setProductos([])
@@ -103,6 +121,8 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
     })
     setPagina(nuevosFiltros.pagina || 1)
   }
+
+
 
   /* ── Hero de colección ───────────────────────────────── */
   const ColeccionHero = () => {
@@ -172,6 +192,9 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
 
         {/* Hero de colección o carrusel */}
         {coleccionSlug ? <ColeccionHero /> : <CarruselColecciones segment={segment} />}
+
+        {/* Carrusel editorial hero (solo en vista general) */}
+        {!coleccionSlug && <CarruselSeleccionCurada segment={segment} />}
 
         {/* Hero editorial (solo sin colección) */}
         {!coleccionSlug && (

@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { CatalogoPorSegmento } from '@/components/catalog/CatalogoPorSegmento'
 import type { Metadata } from 'next'
 
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 }
 
 export default function OriginalPage() {
-  return <CatalogoPorSegmento segment="original" />
+  return (
+    <Suspense fallback={null}>
+      <CatalogoPorSegmento segment="original" />
+    </Suspense>
+  )
 }

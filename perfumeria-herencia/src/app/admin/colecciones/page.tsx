@@ -313,7 +313,10 @@ export default function AdminColeccionesPage() {
                 <th className="px-4 py-3 text-center">Productos</th>
                 <th className="px-4 py-3 text-center">Orden</th>
                 <th className="px-4 py-3 text-center">Activo</th>
-                <th className="px-4 py-3 text-center">Destacado</th>
+                <th className="px-4 py-3 text-center">
+                  <span className="block">Destacado</span>
+                  <span className="block text-[10px] font-normal text-amber-500 tracking-tight">= aparece en carrusel</span>
+                </th>
                 <th className="px-4 py-3 text-right">Acciones</th>
               </tr>
             </thead>
@@ -563,7 +566,10 @@ export default function AdminColeccionesPage() {
                     onChange={handleFormChange}
                     className="w-4 h-4 rounded accent-amber-500"
                   />
-                  <span className="text-sm text-gray-700">Destacado / Trending</span>
+                  <span className="text-sm text-gray-700">
+                    Destacado
+                    <span className="block text-xs text-amber-600 font-normal">aparece en el carrusel «Selección Curada»</span>
+                  </span>
                 </label>
               </div>
 

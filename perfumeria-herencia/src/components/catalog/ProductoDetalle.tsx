@@ -17,11 +17,28 @@ const FALLBACK_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 /** Deriva la URL de la imagen 2 a partir de la imagen 1 */
 function getImg2(img1: string): string | null {
   if (!img1 || img1.startsWith('data:')) return null
-  // Formato: "nombre.1.avif" → "nombre.2.avif"
   if (img1.includes('.1.avif')) return img1.replace('.1.avif', '.2.avif')
-  // Formato: "nombre1.avif" → "nombre2.avif"
   if (img1.match(/1\.avif$/)) return img1.replace(/1\.avif$/, '2.avif')
   return null
+}
+
+/** Lee la lista de IDs del catálogo y calcula el prev/next */
+function getNavIds(productoId: string): { prevId: string | null; nextId: string | null; pos: number; total: number } {
+  try {
+    const raw = sessionStorage.getItem('herencia_lista_ids')
+    if (!raw) return { prevId: null, nextId: null, pos: 0, total: 0 }
+    const ids: string[] = JSON.parse(raw)
+    const idx = ids.indexOf(productoId)
+    if (idx === -1) return { prevId: null, nextId: null, pos: 0, total: ids.length }
+    return {
+      prevId: idx > 0 ? ids[idx - 1] : null,
+      nextId: idx < ids.length - 1 ? ids[idx + 1] : null,
+      pos: idx + 1,
+      total: ids.length,
+    }
+  } catch {
+    return { prevId: null, nextId: null, pos: 0, total: 0 }
+  }
 }
 
 export function ProductoDetalle({
@@ -38,6 +55,18 @@ export function ProductoDetalle({
   const [imagenes, setImagenes] = useState<string[]>([FALLBACK_IMG])
   const [imgActiva, setImgActiva] = useState(0)
   const touchStartX = useRef<number | null>(null)
+  const touchStartY = useRef<number | null>(null)
+
+  // Navegación entre productos
+  const [nav, setNav] = useState<{ prevId: string | null; nextId: string | null; pos: number; total: number }>({
+    prevId: null, nextId: null, pos: 0, total: 0,
+  })
+
+  useEffect(() => {
+    setNav(getNavIds(productoId))
+  }, [productoId])
+
+  const irProducto = (id: string) => router.push(`/${segment}/producto/${id}`)
 
   useEffect(() => {
     const cargarProducto = async () => {
@@ -87,12 +116,31 @@ export function ProductoDetalle({
 
   const irA = (idx: number) => setImgActiva(Math.max(0, Math.min(imagenes.length - 1, idx)))
 
+  // Touch para carrusel de IMÁGENES (área de la foto)
   const onTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX }
   const onTouchEnd = (e: React.TouchEvent) => {
     if (touchStartX.current === null) return
     const diff = touchStartX.current - e.changedTouches[0].clientX
     if (Math.abs(diff) > 50) irA(imgActiva + (diff > 0 ? 1 : -1))
     touchStartX.current = null
+  }
+
+  // Touch para navegación entre PRODUCTOS (barra inferior)
+  const onNavTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+  }
+  const onNavTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return
+    const dx = touchStartX.current - e.changedTouches[0].clientX
+    const dy = Math.abs(touchStartY.current - e.changedTouches[0].clientY)
+    // Solo activar si el swipe es claramente horizontal
+    if (Math.abs(dx) > 60 && dy < 40) {
+      if (dx > 0 && nav.nextId) irProducto(nav.nextId)
+      if (dx < 0 && nav.prevId) irProducto(nav.prevId)
+    }
+    touchStartX.current = null
+    touchStartY.current = null
   }
 
   if (loading) return (
@@ -307,6 +355,40 @@ export function ProductoDetalle({
             </ul>
           </div>
         </div>
+
+        {/* Navegación entre productos */}
+        {nav.total > 0 && (
+          <div
+            className="mt-16 border-t border-dark/8 pt-6 flex items-center justify-between select-none"
+            onTouchStart={onNavTouchStart}
+            onTouchEnd={onNavTouchEnd}
+          >
+            {/* Anterior */}
+            <button
+              onClick={() => nav.prevId && irProducto(nav.prevId)}
+              disabled={!nav.prevId}
+              className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-dark/40 hover:text-dark transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+            >
+              <span className="text-xl leading-none">‹</span>
+              <span className="hidden sm:inline">Anterior</span>
+            </button>
+
+            {/* Posición */}
+            <span className="text-[10px] tracking-[0.25em] uppercase text-dark/25">
+              {nav.pos} / {nav.total}
+            </span>
+
+            {/* Siguiente */}
+            <button
+              onClick={() => nav.nextId && irProducto(nav.nextId)}
+              disabled={!nav.nextId}
+              className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-dark/40 hover:text-dark transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+            >
+              <span className="hidden sm:inline">Siguiente</span>
+              <span className="text-xl leading-none">›</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -16,7 +16,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'HERENCIA — Perfumería de Autor',
-  description: 'Boutique de fragancias elegantes. Colecciones Signature e Inspired. Cada perfume es una declaración silenciosa.',
+  description: 'Boutique de fragancias elegantes. Perfumes originales y réplicas premium en Guarne, Antioquia. Cada fragancia cuenta tu historia.',
 }
 
 export default function RootLayout({

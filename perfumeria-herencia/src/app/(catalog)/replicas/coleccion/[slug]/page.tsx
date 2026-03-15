@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { CatalogoPorSegmento } from '@/components/catalog/CatalogoPorSegmento'
 
 interface Props {
@@ -26,9 +27,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function ColeccionPage({ params }: Props) {
   return (
-    <CatalogoPorSegmento
-      segment="replicas"
-      coleccionSlug={params.slug}
-    />
+    <Suspense fallback={null}>
+      <CatalogoPorSegmento
+        segment="replicas"
+        coleccionSlug={params.slug}
+      />
+    </Suspense>
   )
 }

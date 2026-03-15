@@ -1,83 +1,149 @@
+import Link from 'next/link'
+
 export function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-deep text-white mt-20 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Brand */}
-          <div>
-            <h3 className="text-2xl font-bold text-primary mb-2">Herencia</h3>
-            <p className="text-sm opacity-75">Perfumería</p>
-            <p className="text-xs opacity-50 mt-2">
-              E-commerce de perfumes auténticos y réplicas de calidad
+    <footer
+      className="mt-24"
+      style={{ backgroundColor: '#111110', color: 'rgba(255,255,255,0.75)' }}
+    >
+      {/* Franja dorada superior */}
+      <div style={{ height: '1px', background: 'rgba(194,162,122,0.35)' }} />
+
+      <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 mb-14">
+
+          {/* ── Marca ───────────────────────────── */}
+          <div className="sm:col-span-2 md:col-span-1">
+            <p
+              className="font-serif text-2xl font-light mb-1 tracking-wide"
+              style={{ color: '#fff' }}
+            >
+              Herencia
+            </p>
+            <p
+              className="text-[9px] tracking-[0.45em] uppercase mb-5"
+              style={{ color: '#C2A27A' }}
+            >
+              Perfumería
+            </p>
+            <p className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.42)' }}>
+              Una esencia que trasciende el tiempo. Perfumes inspirados en la elegancia,
+              la memoria y la autenticidad. Cada aroma cuenta una historia: la tuya.
             </p>
           </div>
 
-          {/* Links */}
+          {/* ── Explorar ────────────────────────── */}
           <div>
-            <h4 className="font-bold mb-4">Navegación</h4>
-            <ul className="space-y-2 text-sm opacity-75">
+            <p
+              className="text-[9px] tracking-[0.38em] uppercase mb-5 font-light"
+              style={{ color: '#C2A27A' }}
+            >
+              Explorar
+            </p>
+            <ul className="space-y-3 text-xs" style={{ color: 'rgba(255,255,255,0.55)' }}>
               <li>
-                <a href="/" className="hover:text-primary transition-colors">
-                  Inicio
-                </a>
-              </li>
-              <li>
-                <a href="/original" className="hover:text-primary transition-colors">
+                <Link href="/original" className="hover:text-white transition-colors duration-200">
                   Catálogo Original
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/replicas" className="hover:text-primary transition-colors">
-                  Réplicas
-                </a>
+                <Link href="/replicas" className="hover:text-white transition-colors duration-200">
+                  Réplicas Premium
+                </Link>
               </li>
-            </ul>
-          </div>
-
-          {/* Info */}
-          <div>
-            <h4 className="font-bold mb-4">Información</h4>
-            <ul className="space-y-2 text-sm opacity-75">
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <Link href="/sobre-nosotros" className="hover:text-white transition-colors duration-200">
                   Sobre nosotros
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Política de privacidad
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-primary transition-colors">
-                  Términos y condiciones
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* ── Legal ───────────────────────────── */}
           <div>
-            <h4 className="font-bold mb-4">Contacto</h4>
-            <div className="space-y-2 text-sm opacity-75">
-              <p>📞 +57 (1) 123-4567</p>
-              <p>📧 info@herenciaperfumeria.com</p>
-              <p>📍 Bogotá, Colombia</p>
-            </div>
+            <p
+              className="text-[9px] tracking-[0.38em] uppercase mb-5 font-light"
+              style={{ color: '#C2A27A' }}
+            >
+              Legal
+            </p>
+            <ul className="space-y-3 text-xs" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              <li>
+                <Link href="/politica-de-privacidad" className="hover:text-white transition-colors duration-200">
+                  Política de privacidad
+                </Link>
+              </li>
+              <li>
+                <Link href="/terminos-y-condiciones" className="hover:text-white transition-colors duration-200">
+                  Términos y condiciones
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* ── Contacto ────────────────────────── */}
+          <div>
+            <p
+              className="text-[9px] tracking-[0.38em] uppercase mb-5 font-light"
+              style={{ color: '#C2A27A' }}
+            >
+              Contacto
+            </p>
+            <ul className="space-y-3 text-xs" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              <li>
+                <a
+                  href="tel:+573117997246"
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  +57 311 799 7246
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:hereciaperfumeria@gmail.com"
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  hereciaperfumeria@gmail.com
+                </a>
+              </li>
+              <li style={{ color: 'rgba(255,255,255,0.38)' }}>
+                Vereda Hojas Anchas<br />
+                Guarne, Antioquia
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-white/20 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center text-xs opacity-50">
-            <p>&copy; {currentYear} Herencia Perfumería. Todos los derechos reservados.</p>
-            <div className="flex gap-4 mt-4 md:mt-0">
-              <a href="#" className="hover:text-primary transition-colors">Twitter</a>
-              <a href="#" className="hover:text-primary transition-colors">Instagram</a>
-              <a href="#" className="hover:text-primary transition-colors">Facebook</a>
-            </div>
+        {/* ── Divisor ─────────────────────────── */}
+        <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)', marginBottom: '28px' }} />
+
+        {/* ── Pie ─────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p
+            className="text-[10px] tracking-widest"
+            style={{ color: 'rgba(255,255,255,0.3)' }}
+          >
+            © {currentYear} Herencia Perfumería · Todos los derechos reservados
+          </p>
+          <div className="flex items-center gap-5">
+            <a
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] tracking-[0.28em] uppercase transition-colors duration-200 text-white/35 hover:text-accent"
+            >
+              Instagram
+            </a>
+            <a
+              href="https://wa.me/573117997246"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] tracking-[0.28em] uppercase transition-colors duration-200 text-white/35 hover:text-accent"
+            >
+              WhatsApp
+            </a>
           </div>
         </div>
       </div>

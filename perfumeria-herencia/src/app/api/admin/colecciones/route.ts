@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ColeccionService } from '@/services'
+import { requireAdmin } from '@/lib/auth'
 
 /** GET /api/admin/colecciones?segmento=ORIGINAL */
 export async function GET(request: NextRequest) {
+  const unauthorized = await requireAdmin(request)
+  if (unauthorized) return unauthorized
   try {
     const { searchParams } = new URL(request.url)
     const segmento = searchParams.get('segmento') || undefined
@@ -20,6 +23,8 @@ export async function GET(request: NextRequest) {
 
 /** POST /api/admin/colecciones  →  crear colección */
 export async function POST(request: NextRequest) {
+  const unauthorized = await requireAdmin(request)
+  if (unauthorized) return unauthorized
   try {
     const body = await request.json()
 

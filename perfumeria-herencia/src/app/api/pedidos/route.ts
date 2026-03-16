@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PedidoService } from '@/services'
 import { CrearPedidoSchema } from '@/lib/validations'
+import { requireAdmin } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,6 +47,8 @@ export async function POST(request: NextRequest) {
 export async function GET(
   request: NextRequest,
 ) {
+  const unauthorized = await requireAdmin(request)
+  if (unauthorized) return unauthorized
   try {
     const { searchParams } = new URL(request.url)
     const pagina = parseInt(searchParams.get('pagina') || '1')

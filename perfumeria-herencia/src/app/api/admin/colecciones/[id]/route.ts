@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ColeccionService } from '@/services'
+import { requireAdmin } from '@/lib/auth'
 
 /** GET /api/admin/colecciones/[id] */
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const unauthorized = await requireAdmin(req)
+  if (unauthorized) return unauthorized
   try {
     const coleccion = await ColeccionService.obtenerPorId(params.id)
     return NextResponse.json({ exito: true, datos: coleccion })
@@ -19,6 +22,8 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const unauthorized = await requireAdmin(request)
+  if (unauthorized) return unauthorized
   try {
     const body = await request.json()
     const coleccion = await ColeccionService.actualizar(params.id, body)
@@ -34,9 +39,11 @@ export async function PUT(
 
 /** DELETE /api/admin/colecciones/[id] */
 export async function DELETE(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const unauthorized = await requireAdmin(req)
+  if (unauthorized) return unauthorized
   try {
     await ColeccionService.eliminar(params.id)
     return NextResponse.json({ exito: true, mensaje: 'Colección eliminada' })

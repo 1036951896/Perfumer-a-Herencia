@@ -52,13 +52,16 @@ export function formatarPrecio(precio: number | null | undefined): string {
 }
 
 /**
- * Formatea un precio en euros para el panel admin
+ * Formatea un precio en pesos para el panel admin
  */
 export function formatCurrency(precio: number | null | undefined): string {
-  if (!precio) return '€0.00'
-  return new Intl.NumberFormat('es-ES', {
+  if (!precio) return '$0'
+  return new Intl.NumberFormat('es-CO', {
     style: 'currency',
-    currency: 'EUR',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(precio)
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(precio)

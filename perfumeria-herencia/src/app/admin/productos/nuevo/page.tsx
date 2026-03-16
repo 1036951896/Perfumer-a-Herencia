@@ -314,7 +314,7 @@ export default function NuevoProducto() {
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs text-gray-600 mb-1.5 tracking-wide">PRECIO (€)</label>
+                  <label className="block text-xs text-gray-600 mb-1.5 tracking-wide">PRECIO ($)</label>
                   <input
                     type="number"
                     name="precio"

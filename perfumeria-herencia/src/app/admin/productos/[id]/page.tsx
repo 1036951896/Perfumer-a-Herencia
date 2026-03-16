@@ -36,7 +36,10 @@ export default function EditarProducto() {
   const [producto, setProducto] = useState<Producto | null>(null);
   const [marcas, setMarcas] = useState<Marca[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [imagenPreview, setImagenPreview] = useState('');
+  const [imagen1Url, setImagen1Url] = useState('');
+  const [imagen2Url, setImagen2Url] = useState('');
+  const [subiendo1, setSubiendo1] = useState(false);
+  const [subiendo2, setSubiendo2] = useState(false);
 
   useEffect(() => {
     // Cargar producto
@@ -45,7 +48,9 @@ export default function EditarProducto() {
       .then(data => {
         const p = data.datos || data;
         setProducto(p);
-        setImagenPreview(p.imagenUrl?.includes('|') ? p.imagenUrl.split('|')[0].trim() : (p.imagenUrl || ''));
+        const partes = (p.imagenUrl || '').split('|')
+        setImagen1Url(partes[0]?.trim() || '')
+        setImagen2Url(partes[1]?.trim() || '')
       });
 
     // Cargar marcas y categorías
@@ -69,7 +74,7 @@ export default function EditarProducto() {
       descripcion: formData.get('descripcion'),
       precio: parseFloat(formData.get('precio') as string),
       stock: parseInt(formData.get('stock') as string),
-      imagenUrl: formData.get('imagenUrl'),
+      imagenUrl: [imagen1Url, imagen2Url].filter(Boolean).join('|'),
       segmento: formData.get('segmento'),
       concentracion: formData.get('concentracion'),
       genero: formData.get('genero'),
@@ -114,6 +119,23 @@ export default function EditarProducto() {
       console.error('Error al eliminar producto:', error);
     }
   };
+
+  const handleSubirImagen = async (file: File | null, numero: 1 | 2) => {
+    if (!file) return
+    numero === 1 ? setSubiendo1(true) : setSubiendo2(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      const json = await res.json()
+      if (json.url) numero === 1 ? setImagen1Url(json.url) : setImagen2Url(json.url)
+      else alert(json.error || 'Error al subir la imagen')
+    } catch {
+      alert('Error al subir la imagen')
+    } finally {
+      numero === 1 ? setSubiendo1(false) : setSubiendo2(false)
+    }
+  }
 
   if (!producto) {
     return <div className="p-8">Cargando...</div>;
@@ -257,27 +279,54 @@ export default function EditarProducto() {
             </div>
 
             <div className="bg-white p-6 border border-gray-200 rounded">
-              <h2 className="text-sm font-medium text-gray-900 mb-4 tracking-wide">IMAGEN</h2>
-              
-              <input
-                type="url"
-                name="imagenUrl"
-                required
-                defaultValue={producto.imagenUrl}
-                onChange={(e) => setImagenPreview(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-gray-900 mb-3"
-              />
+              <h2 className="text-sm font-medium text-gray-900 mb-4 tracking-wide">IMÁGENES</h2>
 
-              {imagenPreview && (
-                <div className="relative w-full h-48 bg-gray-100 rounded overflow-hidden">
-                  <Image
-                    src={imagenPreview.includes('|') ? imagenPreview.split('|')[0].trim() : imagenPreview}
-                    alt="Preview"
-                    fill
-                    className="object-contain"
+              {/* Imagen 1 — Catálogo */}
+              <div className="mb-6">
+                <label className="block text-xs text-gray-600 mb-1.5 tracking-wide">IMAGEN 1 — CATÁLOGO</label>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={imagen1Url}
+                    onChange={(e) => setImagen1Url(e.target.value)}
+                    placeholder="/productos/nombre.webp"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-gray-900"
                   />
+                  <label className="cursor-pointer px-3 py-2 border border-gray-300 rounded text-xs text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-colors whitespace-nowrap flex items-center">
+                    {subiendo1 ? 'Subiendo…' : '↑ Subir foto'}
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSubirImagen(e.target.files?.[0] ?? null, 1)} />
+                  </label>
                 </div>
-              )}
+                {imagen1Url && (
+                  <div className="relative w-full h-40 bg-gray-100 rounded overflow-hidden">
+                    <Image src={imagen1Url} alt="Imagen 1" fill className="object-contain" unoptimized />
+                  </div>
+                )}
+              </div>
+
+              {/* Imagen 2 — Detalle */}
+              <div>
+                <label className="block text-xs text-gray-600 mb-1.5 tracking-wide">IMAGEN 2 — DETALLE</label>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={imagen2Url}
+                    onChange={(e) => setImagen2Url(e.target.value)}
+                    placeholder="/productos/nombre2.webp"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-gray-900"
+                  />
+                  <label className="cursor-pointer px-3 py-2 border border-gray-300 rounded text-xs text-gray-600 hover:border-gray-900 hover:text-gray-900 transition-colors whitespace-nowrap flex items-center">
+                    {subiendo2 ? 'Subiendo…' : '↑ Subir foto'}
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSubirImagen(e.target.files?.[0] ?? null, 2)} />
+                  </label>
+                </div>
+                {imagen2Url && (
+                  <div className="relative w-full h-40 bg-gray-100 rounded overflow-hidden">
+                    <Image src={imagen2Url} alt="Imagen 2" fill className="object-contain" unoptimized />
+                  </div>
+                )}
+                <p className="text-xs text-gray-400 mt-2">Aparece en la página de detalle junto a la descripción</p>
+              </div>
             </div>
 
             <div className="bg-white p-6 border border-gray-200 rounded">

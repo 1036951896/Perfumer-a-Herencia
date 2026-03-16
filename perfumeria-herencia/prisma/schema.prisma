@@ -176,3 +176,10 @@ enum EstadoPedido {
   ENTREGADO
   CANCELADO
 }
+
+model AdminConfig {
+  id           String @id @default("admin")
+  passwordHash String
+
+  @@map("admin_config")
+}

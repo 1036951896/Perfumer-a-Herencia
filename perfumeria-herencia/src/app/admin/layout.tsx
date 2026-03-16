@@ -1,21 +1,11 @@
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-
-// Verificación básica de autenticación (mejorar con NextAuth/middleware después)
-function isAuthenticated() {
-  // Por ahora siempre true - implementar autenticación real después
-  return true;
-}
+import { LogoutButton } from '@/components/admin/LogoutButton';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  if (!isAuthenticated()) {
-    redirect('/login');
-  }
-
   return (
     <div className="flex min-h-screen bg-[#FAFAFA] font-sans">
       {/* Sidebar - Operacional, no decorativo */}
@@ -67,14 +57,25 @@ export default function AdminLayout({
                 Colecciones
               </Link>
             </li>
-
           </ul>
+
+          <div className="mt-6 pt-4 border-t border-gray-100">
+            <p className="text-[10px] text-gray-400 tracking-widest uppercase px-4 mb-2">Cuenta</p>
+            <ul className="space-y-1">
+              <li>
+                <Link
+                  href="/admin/cuenta"
+                  className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors"
+                >
+                  Cambiar contraseña
+                </Link>
+              </li>
+            </ul>
+          </div>
         </nav>
 
         <div className="absolute bottom-0 w-64 p-4 border-t border-gray-200 bg-white">
-          <button className="text-xs text-gray-500 hover:text-gray-700 tracking-wide">
-            Cerrar sesión
-          </button>
+          <LogoutButton />
         </div>
       </aside>
 

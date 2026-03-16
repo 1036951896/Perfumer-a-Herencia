@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
+import CambiarEstadoPedido from '@/components/admin/CambiarEstadoPedido';
 
 async function getPedidos() {
   const pedidos = await prisma.pedido.findMany({
@@ -20,21 +21,6 @@ async function getPedidos() {
   return pedidos;
 }
 
-const estadoLabels: Record<string, string> = {
-  PENDIENTE: 'Pendiente',
-  EN_PROCESO: 'En proceso',
-  ENVIADO: 'Enviado',
-  ENTREGADO: 'Entregado',
-  CANCELADO: 'Cancelado'
-};
-
-const estadoColors: Record<string, string> = {
-  PENDIENTE: 'bg-amber-50 text-amber-700',
-  EN_PROCESO: 'bg-blue-50 text-blue-700',
-  ENVIADO: 'bg-purple-50 text-purple-700',
-  ENTREGADO: 'bg-green-50 text-green-700',
-  CANCELADO: 'bg-gray-50 text-gray-700'
-};
 
 export const metadata = {
   title: 'Gestión de Pedidos — HERENCIA',
@@ -84,9 +70,7 @@ export default async function PedidosAdmin() {
                   </p>
                 </td>
                 <td className="py-3 px-4">
-                  <span className={`inline-block px-2 py-1 text-xs rounded ${estadoColors[pedido.estado]}`}>
-                    {estadoLabels[pedido.estado]}
-                  </span>
+                  <CambiarEstadoPedido pedidoId={pedido.id} estadoActual={pedido.estado} />
                 </td>
                 <td className="py-3 px-4 text-right font-medium text-gray-900">
                   {formatCurrency(pedido.total)}

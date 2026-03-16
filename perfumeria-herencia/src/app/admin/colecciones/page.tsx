@@ -28,6 +28,7 @@ const BLANK_FORM: {
   seoDescription: string
   imagenUrl: string
   bannerUrl: string
+  colorTexto: string
   orden: string
   destacado: boolean
   segmento: 'ORIGINAL' | 'REPLICA'
@@ -39,6 +40,7 @@ const BLANK_FORM: {
   seoDescription: '',
   imagenUrl: '',
   bannerUrl: '',
+  colorTexto: '#1a1a1a',
   orden: '0',
   destacado: false,
   segmento: 'ORIGINAL',
@@ -130,6 +132,7 @@ export default function AdminColeccionesPage() {
       seoDescription: col.seoDescription || '',
       imagenUrl: col.imagenUrl || '',
       bannerUrl: col.bannerUrl || '',
+      colorTexto: col.colorTexto || '#1a1a1a',
       orden: String(col.orden),
       destacado: col.destacado,
       segmento: col.segmento as 'ORIGINAL' | 'REPLICA',
@@ -192,6 +195,7 @@ export default function AdminColeccionesPage() {
         seoDescription: form.seoDescription || undefined,
         imagenUrl: form.imagenUrl || undefined,
         bannerUrl: form.bannerUrl || undefined,
+        colorTexto: form.colorTexto || '#1a1a1a',
         orden: parseInt(form.orden, 10) || 0,
         destacado: form.destacado,
         segmento: form.segmento,
@@ -588,8 +592,8 @@ export default function AdminColeccionesPage() {
                 />
               </div>
 
-              {/* Orden + Destacado */}
-              <div className="flex items-center gap-6">
+              {/* Orden + Destacado + Color texto */}
+              <div className="flex items-start gap-6 flex-wrap">
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">Orden</label>
                   <input
@@ -599,6 +603,34 @@ export default function AdminColeccionesPage() {
                     onChange={handleFormChange}
                     className="w-20 border border-gray-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
                   />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">Color del texto</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      name="colorTexto"
+                      type="color"
+                      value={form.colorTexto}
+                      onChange={handleFormChange}
+                      className="w-10 h-10 rounded cursor-pointer border border-gray-200 p-0.5"
+                      title="Color del título en el carrusel"
+                    />
+                    <input
+                      name="colorTexto"
+                      type="text"
+                      value={form.colorTexto}
+                      onChange={handleFormChange}
+                      className="w-24 border border-gray-200 rounded px-2 py-2 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-gray-400"
+                      placeholder="#1a1a1a"
+                    />
+                    <span
+                      className="text-sm font-medium px-3 py-1.5 rounded"
+                      style={{ color: form.colorTexto, background: form.colorTexto === '#ffffff' || form.colorTexto === '#fff' ? '#1a1a1a' : '#f5f5f5' }}
+                    >
+                      Preview
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-gray-400 mt-1">Color del título en el carrusel</p>
                 </div>
                 <label className="flex items-center gap-2 cursor-pointer mt-4">
                   <input

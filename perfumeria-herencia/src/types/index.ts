@@ -14,6 +14,7 @@ export interface Coleccion {
   seoDescription?: string
   imagenUrl?: string
   bannerUrl?: string
+  colorTexto?: string
   orden: number
   activo: boolean
   destacado: boolean
@@ -31,6 +32,7 @@ export interface CrearColeccionDTO {
   seoDescription?: string
   imagenUrl?: string
   bannerUrl?: string
+  colorTexto?: string
   orden?: number
   destacado?: boolean
   segmento: TipoProducto
@@ -44,6 +46,7 @@ export interface ActualizarColeccionDTO {
   seoDescription?: string
   imagenUrl?: string
   bannerUrl?: string
+  colorTexto?: string
   orden?: number
   activo?: boolean
   destacado?: boolean

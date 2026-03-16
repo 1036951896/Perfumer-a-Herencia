@@ -46,6 +46,7 @@ model Coleccion {
   seoDescription String?
   imagenUrl      String?    // imagen card carrusel
   bannerUrl      String?    // hero de página colección
+  colorTexto     String?    @default("#1a1a1a") // color del texto en el carrusel
   orden          Int        @default(0)
   activo         Boolean    @default(true)
   destacado      Boolean    @default(false)

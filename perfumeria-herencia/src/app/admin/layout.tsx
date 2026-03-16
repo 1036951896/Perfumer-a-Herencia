@@ -67,14 +67,7 @@ export default function AdminLayout({
                 Colecciones
               </Link>
             </li>
-            <li>
-              <Link 
-                href="/admin/pagos" 
-                className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded transition-colors"
-              >
-                Pasarelas de Pago
-              </Link>
-            </li>
+
           </ul>
         </nav>
 

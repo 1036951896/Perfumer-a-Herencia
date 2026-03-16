@@ -277,58 +277,9 @@ export function CarritoCompras({ segment }: { segment: 'original' | 'replicas' }
                 <p className="font-serif text-4xl font-light text-dark">{formatarPrecio(total)}</p>
               </div>
 
-              {/* ── Métodos de pago ───────────────────── */}
+              {/* ── Método de pago ───────────────────── */}
               <div>
-                <p className="text-[9px] tracking-[0.45em] uppercase text-dark/30 mb-4">Método de pago</p>
                 <div className="space-y-3">
-
-                  {/* Mercado Pago */}
-                  <button
-                    onClick={handleMercadoPago}
-                    disabled={!mpActivo || procesando !== null}
-                    className="w-full flex items-center gap-4 border rounded-[10px] px-5 py-4 transition-all duration-200 group text-left disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ background: mpActivo ? '#fff' : '#fafafa', borderColor: 'rgba(0,0,0,0.08)' }}
-                    onMouseEnter={e => { if (mpActivo) e.currentTarget.style.borderColor = '#009EE3' }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)' }}
-                  >
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: '#009EE3' }}>
-                      MP
-                    </div>
-                    <div className="flex-1 min-w-0 text-left">
-                      <p className="text-sm font-medium text-dark">Mercado Pago</p>
-                      <p className="text-xs text-dark/40 mt-0.5">
-                        {mpActivo ? 'Tarjeta, PSE, Nequi, efectivo' : 'Próximamente disponible'}
-                      </p>
-                    </div>
-                    {procesando === 'mercadopago'
-                      ? <span className="text-xs text-dark/40 animate-pulse">Redirigiendo…</span>
-                      : <span className="text-dark/20 text-lg">→</span>
-                    }
-                  </button>
-
-                  {/* Addi */}
-                  <button
-                    onClick={handleAddi}
-                    disabled={!addiActivo || procesando !== null}
-                    className="w-full flex items-center gap-4 border rounded-[10px] px-5 py-4 transition-all duration-200 group text-left disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ background: addiActivo ? '#fff' : '#fafafa', borderColor: 'rgba(0,0,0,0.08)' }}
-                    onMouseEnter={e => { if (addiActivo) e.currentTarget.style.borderColor = '#FF4E00' }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.08)' }}
-                  >
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: '#FF4E00' }}>
-                      Ad
-                    </div>
-                    <div className="flex-1 min-w-0 text-left">
-                      <p className="text-sm font-medium text-dark">Addi — Paga a cuotas</p>
-                      <p className="text-xs text-dark/40 mt-0.5">
-                        {addiActivo ? 'Sin interés · Aprobación inmediata' : 'Próximamente disponible'}
-                      </p>
-                    </div>
-                    {procesando === 'addi'
-                      ? <span className="text-xs text-dark/40 animate-pulse">Redirigiendo…</span>
-                      : <span className="text-dark/20 text-lg">→</span>
-                    }
-                  </button>
 
                   {/* WhatsApp — siempre activo */}
                   <button

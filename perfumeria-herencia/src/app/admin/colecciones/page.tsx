@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react'
+import Image from 'next/image'
 import { Coleccion, CrearColeccionDTO, ActualizarColeccionDTO, Producto } from '@/types'
 
 /* ─────────────────────────────────────────────────────────────────
@@ -57,6 +58,8 @@ export default function AdminColeccionesPage() {
   const [form, setForm] = useState({ ...BLANK_FORM })
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
+  const [subiendoImagen, setSubiendoImagen] = useState(false)
+  const [subiendoBanner, setSubiendoBanner] = useState(false)
 
   // Product assignment panel
   const [assignOpen, setAssignOpen] = useState(false)
@@ -156,6 +159,23 @@ export default function AdminColeccionesPage() {
           .trim()
           .replace(/\s+/g, '-'),
       }))
+    }
+  }
+
+  const handleSubirImagen = async (file: File | null, campo: 'imagenUrl' | 'bannerUrl') => {
+    if (!file) return
+    campo === 'imagenUrl' ? setSubiendoImagen(true) : setSubiendoBanner(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/admin/upload', { method: 'POST', body: fd })
+      const json = await res.json()
+      if (json.url) setForm(prev => ({ ...prev, [campo]: json.url }))
+      else alert(json.error || 'Error al subir la imagen')
+    } catch {
+      alert('Error al subir la imagen')
+    } finally {
+      campo === 'imagenUrl' ? setSubiendoImagen(false) : setSubiendoBanner(false)
     }
   }
 
@@ -503,24 +523,46 @@ export default function AdminColeccionesPage() {
               {/* URLs */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">URL imagen card</label>
-                  <input
-                    name="imagenUrl"
-                    value={form.imagenUrl}
-                    onChange={handleFormChange}
-                    className="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
-                    placeholder="https://..."
-                  />
+                  <label className="block text-xs text-gray-500 mb-1">Imagen card</label>
+                  <div className="flex gap-1.5 mb-1.5">
+                    <input
+                      name="imagenUrl"
+                      value={form.imagenUrl}
+                      onChange={handleFormChange}
+                      className="flex-1 border border-gray-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                      placeholder="/colecciones/img.webp"
+                    />
+                    <label className="cursor-pointer px-2 py-2 border border-gray-200 rounded text-xs text-gray-500 hover:border-gray-900 hover:text-gray-900 transition-colors flex items-center whitespace-nowrap">
+                      {subiendoImagen ? '...' : '↑'}
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSubirImagen(e.target.files?.[0] ?? null, 'imagenUrl')} />
+                    </label>
+                  </div>
+                  {form.imagenUrl && (
+                    <div className="relative h-20 bg-gray-50 rounded overflow-hidden">
+                      <Image src={form.imagenUrl} alt="preview" fill className="object-contain" unoptimized />
+                    </div>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-500 mb-1">URL banner hero</label>
-                  <input
-                    name="bannerUrl"
-                    value={form.bannerUrl}
-                    onChange={handleFormChange}
-                    className="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
-                    placeholder="https://..."
-                  />
+                  <label className="block text-xs text-gray-500 mb-1">Banner hero</label>
+                  <div className="flex gap-1.5 mb-1.5">
+                    <input
+                      name="bannerUrl"
+                      value={form.bannerUrl}
+                      onChange={handleFormChange}
+                      className="flex-1 border border-gray-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                      placeholder="/colecciones/banner.webp"
+                    />
+                    <label className="cursor-pointer px-2 py-2 border border-gray-200 rounded text-xs text-gray-500 hover:border-gray-900 hover:text-gray-900 transition-colors flex items-center whitespace-nowrap">
+                      {subiendoBanner ? '...' : '↑'}
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSubirImagen(e.target.files?.[0] ?? null, 'bannerUrl')} />
+                    </label>
+                  </div>
+                  {form.bannerUrl && (
+                    <div className="relative h-20 bg-gray-50 rounded overflow-hidden">
+                      <Image src={form.bannerUrl} alt="preview" fill className="object-contain" unoptimized />
+                    </div>
+                  )}
                 </div>
               </div>
 

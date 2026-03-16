@@ -62,9 +62,6 @@ export function formatCurrency(precio: number | null | undefined): string {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(precio)
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(precio)
 }
 
 /**

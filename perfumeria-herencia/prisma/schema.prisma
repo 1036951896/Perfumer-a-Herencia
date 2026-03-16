@@ -93,8 +93,8 @@ model Producto {
 model Pedido {
   id             String        @id @default(uuid())
   referencia     String        @unique
-  nombreCliente  String
-  emailCliente   String
+  nombreCliente  String?
+  emailCliente   String?
   telefonoCliente String?
   direccion      String?
   total          Float
@@ -130,6 +130,24 @@ model AdminUser {
   updatedAt DateTime @updatedAt
 
   @@map("admin_users")
+}
+
+model ConfigPasarela {
+  id            String   @id @default(uuid())
+  proveedor     String   @unique   // "mercadopago" | "addi"
+  activo        Boolean  @default(false)
+  // Mercado Pago
+  mpPublicKey   String?
+  mpAccessToken String?
+  // Addi
+  addiAlias     String?
+  addiApiKey    String?
+  // Nombre visible y notas internas
+  nombreVisible String?
+  notas         String?
+  updatedAt     DateTime @updatedAt
+
+  @@map("config_pasarelas")
 }
 
 enum Segmento {

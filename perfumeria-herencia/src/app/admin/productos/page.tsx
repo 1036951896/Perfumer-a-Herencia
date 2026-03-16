@@ -58,7 +58,7 @@ export default async function ProductosAdmin() {
                   <div className="flex items-center gap-3">
                     <div className="relative w-12 h-12 rounded overflow-hidden bg-gray-100">
                       <Image
-                        src={producto.imagenUrl}
+                        src={producto.imagenUrl?.includes('|') ? producto.imagenUrl.split('|')[0].trim() : (producto.imagenUrl || '')}
                         alt={producto.nombre}
                         fill
                         className="object-cover"

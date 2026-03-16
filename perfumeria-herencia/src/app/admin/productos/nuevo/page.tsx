@@ -32,11 +32,11 @@ export default function NuevoProducto() {
     // Cargar marcas y categorías
     fetch('/api/marcas')
       .then(res => res.json())
-      .then(data => setMarcas(data));
+      .then(data => setMarcas(data.datos || data));
     
     fetch('/api/categorias')
       .then(res => res.json())
-      .then(data => setCategorias(data));
+      .then(data => setCategorias(data.datos || data));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -263,7 +263,7 @@ export default function NuevoProducto() {
               {imagenPreview && (
                 <div className="relative w-full h-48 bg-gray-100 rounded overflow-hidden mb-3">
                   <Image
-                    src={imagenPreview}
+                    src={imagenPreview.includes('|') ? imagenPreview.split('|')[0].trim() : imagenPreview}
                     alt="Preview"
                     fill
                     className="object-contain"

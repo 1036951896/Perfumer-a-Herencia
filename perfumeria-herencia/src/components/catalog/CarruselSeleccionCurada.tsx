@@ -24,6 +24,8 @@ export function CarruselSeleccionCurada({ segment }: Props) {
   const [paused, setPaused] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const autoplayRef = useRef<NodeJS.Timeout | null>(null)
+  const tabActivoRef = useRef(0)
+  const coleccionesLenRef = useRef(0)
 
   // Drag / swipe con mouse
   const dragRef = useRef({ dragging: false, startX: 0, scrollStart: 0, moved: false })
@@ -48,6 +50,10 @@ export function CarruselSeleccionCurada({ segment }: Props) {
     if (el) el.style.cursor = 'grab'
     dragRef.current.dragging = false
   }
+
+  // Sincronizar refs para que tick pueda leerlos sin deps
+  useEffect(() => { tabActivoRef.current = tabActivo }, [tabActivo])
+  useEffect(() => { coleccionesLenRef.current = colecciones.length }, [colecciones])
 
   // Cargar colecciones destacadas
   useEffect(() => {
@@ -81,7 +87,9 @@ export function CarruselSeleccionCurada({ segment }: Props) {
     if (!el || paused) return
     const nearEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 8
     if (nearEnd) {
-      el.scrollTo({ left: 0, behavior: 'smooth' })
+      // Al final → pasar a la siguiente colección (o volver a la primera)
+      const siguiente = (tabActivoRef.current + 1) % coleccionesLenRef.current
+      setTabActivo(siguiente)
     } else {
       el.scrollBy({ left: CARD_WIDTH, behavior: 'smooth' })
     }

@@ -122,7 +122,7 @@ export default function NuevoProducto() {
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Grid de 2 columnas - operacional y eficiente */}
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {/* Columna izquierda - Información básica */}
           <div className="space-y-6">
             <div className="bg-white p-6 border border-gray-200 rounded">

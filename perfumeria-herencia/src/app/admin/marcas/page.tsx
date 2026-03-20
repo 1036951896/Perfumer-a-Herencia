@@ -31,7 +31,8 @@ export default async function MarcasAdmin() {
       </header>
 
       <div className="bg-white border border-gray-200 rounded overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[400px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="text-left py-3 px-4 font-medium text-gray-700 tracking-wide text-xs">MARCA</th>
@@ -51,6 +52,7 @@ export default async function MarcasAdmin() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

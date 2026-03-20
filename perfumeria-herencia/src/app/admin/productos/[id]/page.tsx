@@ -158,7 +158,7 @@ export default function EditarProducto() {
       </header>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           <div className="space-y-6">
             <div className="bg-white p-6 border border-gray-200 rounded">
               <h2 className="text-sm font-medium text-gray-900 mb-4 tracking-wide">INFORMACIÓN BÁSICA</h2>

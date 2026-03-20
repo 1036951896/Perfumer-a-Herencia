@@ -329,7 +329,8 @@ export default function AdminColeccionesPage() {
         </div>
       ) : (
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
             <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
               <tr>
                 <th className="px-4 py-3 text-left">Nombre / Slug</th>
@@ -444,6 +445,7 @@ export default function AdminColeccionesPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -470,8 +472,8 @@ export default function AdminColeccionesPage() {
               )}
 
               {/* Nombre + Segmento */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2 sm:col-span-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
                   <label className="block text-xs text-gray-500 mb-1">Nombre *</label>
                   <input
                     name="nombre"
@@ -525,7 +527,7 @@ export default function AdminColeccionesPage() {
               </div>
 
               {/* URLs */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-gray-500 mb-1">Imagen card</label>
                   <div className="flex gap-1.5 mb-1.5">

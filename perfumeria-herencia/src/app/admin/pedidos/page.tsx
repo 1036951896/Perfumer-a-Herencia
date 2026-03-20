@@ -37,7 +37,8 @@ export default async function PedidosAdmin() {
       </header>
 
       <div className="bg-white border border-gray-200 rounded overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[600px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="text-left py-3 px-4 font-medium text-gray-700 tracking-wide text-xs">PEDIDO</th>
@@ -86,6 +87,7 @@ export default async function PedidosAdmin() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {pedidos.length === 0 && (

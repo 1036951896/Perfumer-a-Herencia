@@ -63,7 +63,7 @@ export default async function AdminDashboard() {
       </header>
 
       {/* Métricas esenciales - sin decoración */}
-      <div className="grid grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
         <div className="bg-white p-6 border border-gray-200 rounded">
           <p className="text-xs text-gray-500 tracking-wide mb-2">PEDIDOS HOY</p>
           <p className="text-3xl font-medium text-gray-900">{data.pedidosHoy}</p>

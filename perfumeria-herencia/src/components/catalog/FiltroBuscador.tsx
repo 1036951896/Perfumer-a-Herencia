@@ -76,8 +76,14 @@ export function FiltroBuscador({
           <select
             value={marcaSeleccionada}
             onChange={(e) => {
-              setMarcaSeleccionada(e.target.value)
-              handleFiltros()
+              const valor = e.target.value
+              setMarcaSeleccionada(valor)
+              onFiltrosChange({
+                busqueda: busqueda || undefined,
+                marcaId: valor || undefined,
+                genero: generoSeleccionado as any || undefined,
+                pagina: 1,
+              })
             }}
             className="w-full py-2 bg-transparent border-b border-dark/20 focus:border-dark outline-none transition-colors text-sm"
           >
@@ -98,8 +104,14 @@ export function FiltroBuscador({
           <select
             value={generoSeleccionado}
             onChange={(e) => {
-              setGeneroSeleccionado(e.target.value)
-              handleFiltros()
+              const valor = e.target.value
+              setGeneroSeleccionado(valor)
+              onFiltrosChange({
+                busqueda: busqueda || undefined,
+                marcaId: marcaSeleccionada || undefined,
+                genero: valor as any || undefined,
+                pagina: 1,
+              })
             }}
             className="w-full py-2 bg-transparent border-b border-dark/20 focus:border-dark outline-none transition-colors text-sm"
           >

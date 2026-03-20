@@ -3,13 +3,13 @@ import { Suspense } from 'react'
 import { CatalogoPorSegmento } from '@/components/catalog/CatalogoPorSegmento'
 
 interface Props {
-  params: { segment: string; slug: string }
+  params: { slug: string }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/api/colecciones?segmento=${params.segment.toUpperCase()}`,
+      `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/api/colecciones?segmento=ORIGINAL`,
       { next: { revalidate: 60 } }
     )
     const data = await res.json()
@@ -26,11 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default function ColeccionPage({ params }: Props) {
-  const segment = params.segment === 'original' ? 'original' : 'replicas'
   return (
     <Suspense fallback={null}>
       <CatalogoPorSegmento
-        segment={segment as 'original' | 'replicas'}
+        segment="original"
         coleccionSlug={params.slug}
       />
     </Suspense>

@@ -17,7 +17,7 @@ const nextConfig = {
       },
     ],
     dangerouslyAllowSVG: false,
-    unoptimized: false,
+    unoptimized: true,
   },
 };
 

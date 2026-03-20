@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { formatCurrency } from '@/lib/utils';
 import Link from 'next/link';
-import Image from 'next/image';
 
 async function getProductos() {
   const productos = await prisma.producto.findMany({
@@ -58,12 +57,15 @@ export default async function ProductosAdmin() {
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-3">
                     <div className="relative w-12 h-12 rounded overflow-hidden bg-gray-100">
-                      <Image
-                        src={producto.imagenUrl?.includes('|') ? producto.imagenUrl.split('|')[0].trim() : (producto.imagenUrl || '')}
-                        alt={producto.nombre}
-                        fill
-                        className="object-cover"
-                      />
+                      {producto.imagenUrl ? (
+                        <img
+                          src={producto.imagenUrl.includes('|') ? producto.imagenUrl.split('|')[0].trim() : producto.imagenUrl}
+                          alt={producto.nombre}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-200" />
+                      )}
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">{producto.nombre}</p>

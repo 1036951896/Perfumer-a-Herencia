@@ -129,7 +129,7 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-5">
             <a
-              href="https://www.instagram.com/"
+              href="https://www.instagram.com/herenciaperfumeria?igsh=Z290d2Q2d2ZyNzhh"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[10px] tracking-[0.28em] uppercase transition-colors duration-200 text-white/35 hover:text-accent"

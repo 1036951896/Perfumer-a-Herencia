@@ -16,7 +16,10 @@ export function Navbar() {
   useEffect(() => {
     fetch('/api/categorias')
       .then(r => r.json())
-      .then(data => setCategorias(Array.isArray(data) ? data : (data.datos || [])))
+      .then(data => {
+        const all = Array.isArray(data) ? data : (data.datos || [])
+        setCategorias(all.filter((c: any) => (c._count?.productos ?? 1) > 0))
+      })
       .catch(() => {})
   }, [])
 

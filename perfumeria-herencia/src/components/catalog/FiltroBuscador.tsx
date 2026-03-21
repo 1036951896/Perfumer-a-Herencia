@@ -42,6 +42,10 @@ export function FiltroBuscador({
     setGeneroSeleccionado('')
     setCategoriaSeleccionada('')
     onFiltrosChange({
+      busqueda: undefined,
+      marcaId: undefined,
+      genero: undefined,
+      categoriaId: undefined,
       pagina: 1,
     })
   }

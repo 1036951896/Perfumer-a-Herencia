@@ -68,7 +68,8 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
         const [marcasData, generosData, categoriasData, colData] = await Promise.all(promises)
         setMarcas(marcasData.datos || [])
         setGeneros(generosData.datos || [])
-        setCategorias(Array.isArray(categoriasData) ? categoriasData : (categoriasData.datos || []))
+        const allCats = Array.isArray(categoriasData) ? categoriasData : (categoriasData.datos || [])
+        setCategorias(allCats.filter((c: any) => (c._count?.productos ?? 1) > 0))
         if (colData !== undefined) setColeccion(colData)
       } catch (error) {
         console.error('Error al cargar datos iniciales:', error)

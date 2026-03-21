@@ -194,26 +194,23 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-6 py-16">
 
-        {/* Hero de colección o carrusel */}
-        {coleccionSlug ? <ColeccionHero /> : <CarruselColecciones segment={segment} />}
+        {/* Vista de colección específica: hero primero */}
+        {coleccionSlug && <ColeccionHero />}
 
-        {/* Carrusel editorial hero (solo en vista general) */}
-        {!coleccionSlug && <CarruselSeleccionCurada segment={segment} />}
-
-        {/* Hero editorial (solo sin colección) */}
+        {/* Vista general: 1) Título editorial */}
         {!coleccionSlug && (
           <motion.section
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.2 }}
-            className="text-center py-24"
+            className="text-center py-16"
           >
             <p className="text-[10px] tracking-[0.35em] uppercase text-dark/35 mb-6">
               {segment === 'original' ? 'Colección Signature' : 'Colección Inspired'}
             </p>
             <h2 className="font-serif text-4xl md:text-5xl font-light leading-tight text-dark">
               {segment === 'original'
-                ? 'Fragancias que definen carácter.'
+                ? 'Fragancias'
                 : 'Elegancia inspirada en lo eterno.'}
             </h2>
             {/* Separador dorado árabe */}
@@ -226,16 +223,37 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
           </motion.section>
         )}
 
-        {/* Filtros */}
-        <div className="border-t border-dark/8 py-6 mb-16">
-          <FiltroBuscador
-            onFiltrosChange={handleFiltrosChange}
-            marcas={marcas}
-            generos={generos}
-            categorias={categorias}
-            loading={loading}
-          />
-        </div>
+        {/* Vista general: 2) Carrusel de colecciones (imagen) */}
+        {!coleccionSlug && <CarruselColecciones segment={segment} />}
+
+        {/* Vista general: 3) Filtros */}
+        {!coleccionSlug && (
+          <div className="border-t border-dark/8 py-6 mb-16">
+            <FiltroBuscador
+              onFiltrosChange={handleFiltrosChange}
+              marcas={marcas}
+              generos={generos}
+              categorias={categorias}
+              loading={loading}
+            />
+          </div>
+        )}
+
+        {/* Vista general: 4) Carrusel selección curada */}
+        {!coleccionSlug && <CarruselSeleccionCurada segment={segment} />}
+
+        {/* Vista de colección: filtros debajo del hero */}
+        {coleccionSlug && (
+          <div className="border-t border-dark/8 py-6 mb-16">
+            <FiltroBuscador
+              onFiltrosChange={handleFiltrosChange}
+              marcas={marcas}
+              generos={generos}
+              categorias={categorias}
+              loading={loading}
+            />
+          </div>
+        )}
 
         {/* Texto curado */}
         <p className="text-center text-[10px] tracking-[0.3em] uppercase text-dark/25 mb-16">

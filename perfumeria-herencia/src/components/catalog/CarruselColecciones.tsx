@@ -71,8 +71,6 @@ export function CarruselColecciones({ segment }: CarruselColeccionesProps) {
 
   if (!colecciones.length) return null
 
-  const col = colecciones[activo]
-
   return (
     <div
       className="herencia-carrusel-col"
@@ -238,58 +236,6 @@ export function CarruselColecciones({ segment }: CarruselColeccionesProps) {
           </div>
         </div>
       ))}
-
-      {/* ── Flechas ───────────────────────────────────── */}
-      <button
-        aria-label="Anterior"
-        onClick={() => { goTo(activo - 1); restart() }}
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '20px',
-          transform: 'translateY(-50%)',
-          zIndex: 10,
-          width: '40px',
-          height: '40px',
-          border: '1px solid rgba(255,255,255,.2)',
-          background: 'rgba(0,0,0,.12)',
-          backdropFilter: 'blur(6px)',
-          color: 'rgba(255,255,255,.65)',
-          fontSize: '.9rem',
-          cursor: 'pointer',
-          transition: 'all .25s',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        ←
-      </button>
-      <button
-        aria-label="Siguiente"
-        onClick={() => { goTo(activo + 1); restart() }}
-        style={{
-          position: 'absolute',
-          top: '50%',
-          right: '20px',
-          transform: 'translateY(-50%)',
-          zIndex: 10,
-          width: '40px',
-          height: '40px',
-          border: '1px solid rgba(255,255,255,.2)',
-          background: 'rgba(0,0,0,.12)',
-          backdropFilter: 'blur(6px)',
-          color: 'rgba(255,255,255,.65)',
-          fontSize: '.9rem',
-          cursor: 'pointer',
-          transition: 'all .25s',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        →
-      </button>
 
       {/* ── Indicadores ──────────────────────────────── */}
       <div

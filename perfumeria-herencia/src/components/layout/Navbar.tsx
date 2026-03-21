@@ -11,17 +11,6 @@ export function Navbar() {
   const router = useRouter()
   const [segment, setSegment] = useState<Segment | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [categorias, setCategorias] = useState<Array<{ id: string; nombre: string }>>([])
-
-  useEffect(() => {
-    fetch('/api/categorias')
-      .then(r => r.json())
-      .then(data => {
-        const all = Array.isArray(data) ? data : (data.datos || [])
-        setCategorias(all.filter((c: any) => (c._count?.productos ?? 1) > 0))
-      })
-      .catch(() => {})
-  }, [])
 
   useEffect(() => {
     const saved = localStorage.getItem('segment')
@@ -99,21 +88,6 @@ export function Navbar() {
                   Catálogo
                 </Link>
               </>
-            )}
-
-            {/* Categorías */}
-            {categorias.length > 0 && (
-              <div className="hidden md:flex items-center gap-5">
-                {categorias.map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/categorias/${cat.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-')}`}
-                    className="text-xs tracking-[0.15em] uppercase text-dark/60 hover:text-dark transition-colors"
-                  >
-                    {cat.nombre}
-                  </Link>
-                ))}
-              </div>
             )}
 
             {/* Segment Switcher */}
@@ -199,23 +173,6 @@ export function Navbar() {
                   Catálogo
                 </Link>
               </>
-            )}
-
-            {/* Categorías mobile */}
-            {categorias.length > 0 && (
-              <div className="border-t border-gray-100 pt-3 space-y-2">
-                <p className="text-xs tracking-widest uppercase text-dark/40">Categorías</p>
-                {categorias.map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/categorias/${cat.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-')}`}
-                    className="block text-sm text-dark/70 hover:text-dark"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {cat.nombre}
-                  </Link>
-                ))}
-              </div>
             )}
 
             {segment && (

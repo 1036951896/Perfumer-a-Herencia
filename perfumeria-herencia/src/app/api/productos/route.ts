@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const segmento = searchParams.get('segmento') as TipoProducto | null
     const genero = searchParams.get('genero') as Genero | null
     const marcaId = searchParams.get('marcaId') as string | null
+    const categoriaId = searchParams.get('categoriaId') as string | null
     const busqueda = searchParams.get('busqueda') as string | null
     const coleccionSlug = searchParams.get('coleccionSlug') as string | null
     const pagina = parseInt(searchParams.get('pagina') || '1')
@@ -18,6 +19,7 @@ export async function GET(request: NextRequest) {
       segmento: segmento || undefined,
       genero: genero || undefined,
       marcaId: marcaId || undefined,
+      categoriaId: categoriaId || undefined,
       busqueda: busqueda || undefined,
       coleccionSlug: coleccionSlug || undefined,
       pagina,

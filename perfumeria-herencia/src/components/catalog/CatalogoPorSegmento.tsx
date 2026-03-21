@@ -25,6 +25,7 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
   const [productos, setProductos] = useState<Producto[]>([])
   const [marcas, setMarcas] = useState<Marca[]>([])
   const [generos, setGeneros] = useState<string[]>([])
+  const [categorias, setCategorias] = useState<Array<{ id: string; nombre: string }>>([])
   const [coleccion, setColeccion] = useState<Coleccion | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -52,6 +53,7 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
         const promises: Promise<any>[] = [
           fetch('/api/marcas').then((r) => r.json()),
           fetch('/api/generos').then((r) => r.json()),
+          fetch('/api/categorias').then((r) => r.json()),
         ]
 
         if (coleccionSlug) {
@@ -63,9 +65,10 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
           )
         }
 
-        const [marcasData, generosData, colData] = await Promise.all(promises)
+        const [marcasData, generosData, categoriasData, colData] = await Promise.all(promises)
         setMarcas(marcasData.datos || [])
         setGeneros(generosData.datos || [])
+        setCategorias(Array.isArray(categoriasData) ? categoriasData : (categoriasData.datos || []))
         if (colData !== undefined) setColeccion(colData)
       } catch (error) {
         console.error('Error al cargar datos iniciales:', error)
@@ -86,6 +89,7 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
         if (filtros.segmento) queryParams.append('segmento', filtros.segmento)
         if (filtros.genero) queryParams.append('genero', filtros.genero)
         if (filtros.marcaId) queryParams.append('marcaId', filtros.marcaId)
+        if (filtros.categoriaId) queryParams.append('categoriaId', filtros.categoriaId)
         if (filtros.busqueda) queryParams.append('busqueda', filtros.busqueda)
         if (filtros.coleccionSlug) queryParams.append('coleccionSlug', filtros.coleccionSlug)
         queryParams.append('pagina', (pagina || 1).toString())
@@ -228,6 +232,7 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
             onFiltrosChange={handleFiltrosChange}
             marcas={marcas}
             generos={generos}
+            categorias={categorias}
             loading={loading}
           />
         </div>

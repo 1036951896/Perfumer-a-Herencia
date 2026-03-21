@@ -110,6 +110,7 @@ export interface FiltroProductos {
   segmento?: TipoProducto
   genero?: Genero
   marcaId?: string
+  categoriaId?: string
   busqueda?: string
   destacado?: boolean
   coleccionSlug?: string

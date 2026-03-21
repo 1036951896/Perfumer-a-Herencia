@@ -1,4 +1,4 @@
-import { PrismaClient, Segmento, Genero } from '@prisma/client'
+import { PrismaClient, Genero } from '@prisma/client'
 import { FiltroProductos, RespuestaPaginada, Producto } from '@/types'
 
 const prisma = new PrismaClient()
@@ -14,6 +14,7 @@ export class ProductoRepository {
       segmento,
       genero,
       marcaId,
+      categoriaId,
       busqueda,
       destacado,
       coleccionSlug,
@@ -30,6 +31,7 @@ export class ProductoRepository {
     if (segmento) where.segmento = segmento
     if (genero) where.genero = genero
     if (marcaId) where.marcaId = marcaId
+    if (categoriaId) where.categoriaId = categoriaId
     if (destacado !== undefined) where.destacado = destacado
     if (coleccionSlug) {
       where.colecciones = { some: { slug: coleccionSlug, activo: true } }
@@ -53,7 +55,10 @@ export class ProductoRepository {
     ])
 
     return {
-      datos: productos,
+      datos: productos.map(p => ({
+        ...p,
+        descripcion: p.descripcion ?? undefined,
+      })) as Producto[],
       total,
       pagina,
       limite,
@@ -65,17 +70,19 @@ export class ProductoRepository {
    * Obtiene un producto por ID
    */
   static async obtenerPorId(id: string): Promise<Producto | null> {
-    return prisma.producto.findUnique({
+    const p = await prisma.producto.findUnique({
       where: { id },
       include: { marca: true },
     })
+    if (!p) return null
+    return { ...p, descripcion: p.descripcion ?? undefined } as Producto
   }
 
   /**
    * Obtiene productos destacados
    */
   static async obtenerDestacados(limite: number = 8): Promise<Producto[]> {
-    return prisma.producto.findMany({
+    const productos = await prisma.producto.findMany({
       where: {
         destacado: true,
         activo: true,
@@ -84,31 +91,30 @@ export class ProductoRepository {
       take: limite,
       orderBy: { createdAt: 'desc' },
     })
+    return productos.map(p => ({ ...p, descripcion: p.descripcion ?? undefined })) as Producto[]
   }
 
   /**
    * Crea un nuevo producto
    */
   static async crear(datos: any): Promise<Producto> {
-    return prisma.producto.create({
-      data: {
-        ...datos,
-      },
+    const p = await prisma.producto.create({
+      data: { ...datos },
       include: { marca: true },
     })
+    return { ...p, descripcion: p.descripcion ?? undefined } as Producto
   }
 
   /**
    * Actualiza un producto
    */
   static async actualizar(id: string, datos: any): Promise<Producto> {
-    return prisma.producto.update({
+    const p = await prisma.producto.update({
       where: { id },
-      data: {
-        ...datos,
-      },
+      data: { ...datos },
       include: { marca: true },
     })
+    return { ...p, descripcion: p.descripcion ?? undefined } as Producto
   }
 
   /**
@@ -330,9 +336,9 @@ export class CategoriaRepository {
   /**
    * Obtiene todas las categorías por tipo
    */
-  static async obtenerPorTipo(tipo: string) {
+  static async obtenerPorTipo(_tipo: string) {
     return prisma.categoria.findMany({
-      where: { tipo: tipo as any, activa: true },
+      where: { activa: true },
       orderBy: { nombre: 'asc' },
     })
   }

@@ -250,12 +250,6 @@ export function CarruselSeleccionCurada({ segment }: Props) {
 
       </div>
 
-      {/* Contador */}
-      {!loading && productos.length > 0 && (
-        <p className="text-[9px] tracking-[0.25em] uppercase text-dark/20 mt-4 text-right">
-          {productos.length} fragancias · {col.nombre}
-        </p>
-      )}
     </section>
   )
 }

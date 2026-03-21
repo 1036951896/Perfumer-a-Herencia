@@ -15,11 +15,13 @@ export function FiltroBuscador({
   onFiltrosChange,
   marcas,
   generos,
+  categorias = [],
   loading = false,
 }: FiltroBuscadorProps) {
   const [busqueda, setBusqueda] = useState('')
   const [marcaSeleccionada, setMarcaSeleccionada] = useState<string>('')
   const [generoSeleccionado, setGeneroSeleccionado] = useState<string>('')
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<string>('')
   const [mostrarFiltros, setMostrarFiltros] = useState(false)
 
   const handleFiltros = useCallback(() => {

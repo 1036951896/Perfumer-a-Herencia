@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface Marca {
   id: string;
@@ -113,7 +112,6 @@ function MarcaModal({
 }
 
 export function MarcasManager({ initialMarcas }: { initialMarcas: Marca[] }) {
-  const router = useRouter();
   const [marcas, setMarcas] = useState<Marca[]>(initialMarcas);
   const [modal, setModal] = useState<{ open: boolean; marca: Partial<Marca> | null }>({
     open: false,
@@ -135,7 +133,6 @@ export function MarcasManager({ initialMarcas }: { initialMarcas: Marca[] }) {
     if (!json.exito) throw new Error(json.mensaje);
 
     closeModal();
-    router.refresh();
 
     if (isEdit) {
       setMarcas(prev =>

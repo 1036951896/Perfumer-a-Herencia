@@ -206,7 +206,7 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
             transition={{ duration: 1.2 }}
             className="text-center py-16"
           >
-            <p className="text-[10px] tracking-[0.35em] uppercase text-dark/35 mb-6">
+            <p className="text-sm tracking-[0.28em] uppercase text-dark/50 mb-6">
               {segment === 'original' ? 'Colección Signature' : 'Colección Inspired'}
             </p>
             <h2 className="font-serif text-4xl md:text-5xl font-light leading-tight text-dark">
@@ -257,7 +257,7 @@ export function CatalogoPorSegmento({ segment, coleccionSlug }: CatalogoPorSegme
         )}
 
         {/* Texto curado */}
-        <p className="text-center text-[10px] tracking-[0.3em] uppercase text-dark/25 mb-16">
+        <p className="text-center text-xs tracking-[0.22em] uppercase text-dark/40 mb-16">
           {coleccion
             ? `${coleccion.nombre} · ${coleccion._count?.productos ?? ''} fragancias`
             : 'Selección curada · Edición permanente'}

@@ -111,10 +111,10 @@ export function CarruselSeleccionCurada({ segment }: Props) {
       {/* ── Encabezado ─────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
         <div>
-          <p className="text-[9px] tracking-[0.42em] uppercase mb-2" style={{ color: col.colorTexto ? `${col.colorTexto}80` : undefined, opacity: col.colorTexto ? 1 : undefined }} >
+          <p className="text-xs tracking-[0.3em] uppercase mb-2" style={{ color: col.colorTexto ? `${col.colorTexto}` : '#8a7a6a' }} >
             Selección curada
           </p>
-          <h2 className="font-serif text-xl sm:text-2xl font-light leading-snug" style={{ color: col.colorTexto || undefined }}>
+          <h2 className="font-serif text-2xl sm:text-3xl font-light leading-snug" style={{ color: col.colorTexto || undefined }}>
             {col.nombre}
           </h2>
           {/* Línea dorada */}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Coleccion } from '@/types'
 
 interface CarruselColeccionesProps {
@@ -13,7 +13,6 @@ const FALLBACK_IMG =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='500'%3E%3Crect width='1200' height='500' fill='%23F4F2EE'/%3E%3C/svg%3E"
 
 export function CarruselColecciones({ segment }: CarruselColeccionesProps) {
-  const router = useRouter()
   const [colecciones, setColecciones] = useState<Coleccion[]>([])
   const [activo, setActivo] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -205,12 +204,10 @@ export function CarruselColecciones({ segment }: CarruselColeccionesProps) {
               </p>
             )}
 
-            <button
-              onClick={() => router.push(`/${segment}/coleccion/${c.slug}`)}
+            <Link
+              href={`/${segment}/coleccion/${c.slug}`}
               style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
+                display: 'inline-block',
                 fontFamily: 'inherit',
                 fontSize: '.62rem',
                 textTransform: 'uppercase',
@@ -220,19 +217,19 @@ export function CarruselColecciones({ segment }: CarruselColeccionesProps) {
                 paddingBottom: '3px',
                 marginTop: '4px',
                 transition: 'color .3s, border-color .3s',
+                textDecoration: 'none',
               }}
               onMouseEnter={(e) => {
-                ;(e.target as HTMLButtonElement).style.color = '#C2A27A'
-                ;(e.target as HTMLButtonElement).style.borderBottomColor = '#C2A27A'
+                ;(e.currentTarget as HTMLAnchorElement).style.color = '#C2A27A'
+                ;(e.currentTarget as HTMLAnchorElement).style.borderBottomColor = '#C2A27A'
               }}
               onMouseLeave={(e) => {
-                ;(e.target as HTMLButtonElement).style.color = 'rgba(255,255,255,.7)'
-                ;(e.target as HTMLButtonElement).style.borderBottomColor =
-                  'rgba(255,255,255,.35)'
+                ;(e.currentTarget as HTMLAnchorElement).style.color = 'rgba(255,255,255,.7)'
+                ;(e.currentTarget as HTMLAnchorElement).style.borderBottomColor = 'rgba(255,255,255,.35)'
               }}
             >
               Explorar →
-            </button>
+            </Link>
           </div>
         </div>
       ))}
